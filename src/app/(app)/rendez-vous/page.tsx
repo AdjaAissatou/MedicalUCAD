@@ -8,7 +8,13 @@ import { EmptyState } from "@/components/empty-state";
 import { StatutSelect } from "@/components/rendez-vous/statut-select";
 import { initiales, formatHeure } from "@/lib/utils";
 import { STATUT_RDV_LABELS, STATUT_RDV_VARIANTS } from "@/lib/constants";
-import { CalendarPlus, CalendarDays, Clock, Filter } from "lucide-react";
+import {
+  CalendarPlus,
+  CalendarDays,
+  Clock,
+  Filter,
+  Stethoscope,
+} from "lucide-react";
 import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -153,6 +159,16 @@ export default async function RendezVousPage({
                             {STATUT_RDV_LABELS[rdv.statut] ?? rdv.statut}
                           </Badge>
                           <StatutSelect id={rdv.id} statut={rdv.statut} />
+                          {rdv.statut !== "TERMINE" &&
+                            rdv.statut !== "ANNULE" && (
+                              <Link
+                                href={`/consultations/nouvelle?rdv=${rdv.id}`}
+                                title="Démarrer la consultation"
+                                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-primary hover:bg-secondary"
+                              >
+                                <Stethoscope className="h-4 w-4" />
+                              </Link>
+                            )}
                         </div>
                       </li>
                     ))}

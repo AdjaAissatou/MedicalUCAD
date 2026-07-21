@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { Reveal } from "@/components/reveal";
 import { initiales, age, formatDate } from "@/lib/utils";
 import { TYPE_PATIENT_LABELS } from "@/lib/constants";
 import { UserPlus, Search, Users, Phone, FileText } from "lucide-react";
@@ -90,9 +91,10 @@ export default async function PatientsPage({
             {patients.length} patient{patients.length > 1 ? "s" : ""}
           </p>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {patients.map((p) => (
-              <Link key={p.id} href={`/patients/${p.id}`}>
-                <Card className="h-full p-4 transition-shadow hover:shadow-md">
+            {patients.map((p, i) => (
+              <Reveal key={p.id} index={i} className="h-full">
+                <Link href={`/patients/${p.id}`} className="block h-full">
+                  <Card className="card-hover h-full p-4">
                   <div className="flex items-start gap-3">
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-semibold">
                       {initiales(p.prenom, p.nom)}
@@ -141,8 +143,9 @@ export default async function PatientsPage({
                       </span>
                     </div>
                   ) : null}
-                </Card>
-              </Link>
+                  </Card>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </>

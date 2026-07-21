@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { Reveal } from "@/components/reveal";
+import { OrientationStatut } from "@/components/orientations/orientation-statut";
 import { initiales, formatDate } from "@/lib/utils";
-import { Share2, ArrowRight } from "lucide-react";
+import { Share2, ArrowRight, Plus } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -30,23 +33,37 @@ export default async function OrientationsPage() {
       <PageHeader
         title="Orientations"
         description="Redirections des patients vers des services ou spécialistes externes."
-      />
+      >
+        <Link href="/orientations/nouvelle">
+          <Button variant="accent">
+            <Plus className="h-4 w-4" />
+            Nouvelle orientation
+          </Button>
+        </Link>
+      </PageHeader>
 
       {orientations.length === 0 ? (
         <EmptyState
           icon={Share2}
           title="Aucune orientation"
           description="Les orientations vers des spécialistes ou structures externes apparaîtront ici."
-        />
+        >
+          <Link href="/orientations/nouvelle">
+            <Button variant="accent">
+              <Plus className="h-4 w-4" />
+              Nouvelle orientation
+            </Button>
+          </Link>
+        </EmptyState>
       ) : (
         <Card>
           <CardContent className="p-2">
             <ul className="divide-y divide-border">
-              {orientations.map((o) => {
+              {orientations.map((o, i) => {
                 const st =
                   STATUT_ORIENTATION[o.statut] ?? STATUT_ORIENTATION.EN_ATTENTE;
                 return (
-                  <li key={o.id} className="px-3 py-3">
+                  <Reveal as="li" key={o.id} index={i} variant="fade" className="px-3 py-3">
                     <div className="flex items-start gap-3">
                       <Link
                         href={`/patients/${o.patientId}`}
@@ -59,7 +76,10 @@ export default async function OrientationsPage() {
                           <span className="truncate text-sm font-medium text-foreground">
                             {o.patient.prenom} {o.patient.nom}
                           </span>
-                          <Badge variant={st.variant}>{st.label}</Badge>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <Badge variant={st.variant}>{st.label}</Badge>
+                            <OrientationStatut id={o.id} statut={o.statut} />
+                          </div>
                         </div>
                         <p className="mt-0.5 flex items-center gap-1.5 text-sm text-foreground">
                           <ArrowRight className="h-3.5 w-3.5 text-primary" />
@@ -74,7 +94,7 @@ export default async function OrientationsPage() {
                         </p>
                       </div>
                     </div>
-                  </li>
+                  </Reveal>
                 );
               })}
             </ul>

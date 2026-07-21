@@ -11,6 +11,7 @@ import {
   Share2,
   Pill,
   HeartPulse,
+  ShieldCheck,
   X,
 } from "lucide-react";
 
@@ -26,11 +27,23 @@ const NAV = [
 export function AppSidebar({
   open,
   onClose,
+  isAdmin = false,
 }: {
   open?: boolean;
   onClose?: () => void;
+  isAdmin?: boolean;
 }) {
   const pathname = usePathname();
+  const nav = isAdmin
+    ? [
+        ...NAV,
+        {
+          href: "/administration",
+          label: "Administration",
+          icon: ShieldCheck,
+        },
+      ]
+    : NAV;
 
   return (
     <>
@@ -69,7 +82,7 @@ export function AppSidebar({
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          {NAV.map(({ href, label, icon: Icon }) => {
+          {nav.map(({ href, label, icon: Icon }) => {
             const active =
               pathname === href || pathname.startsWith(href + "/");
             return (

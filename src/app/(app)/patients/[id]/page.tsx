@@ -23,6 +23,7 @@ import {
   Stethoscope,
   CalendarDays,
   FileText,
+  Share2,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -121,15 +122,27 @@ export default async function PatientDetail({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Link href={`/rendez-vous/nouveau?patient=${patient.id}`}>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href={`/consultations/nouvelle?patient=${patient.id}`}>
               <Button variant="accent" size="sm">
+                <Stethoscope className="h-4 w-4" />
+                Consultation
+              </Button>
+            </Link>
+            <Link href={`/rendez-vous/nouveau?patient=${patient.id}`}>
+              <Button variant="outline" size="sm">
                 <CalendarPlus className="h-4 w-4" />
                 Rendez-vous
               </Button>
             </Link>
-            <Link href={`/patients/${patient.id}/modifier`}>
+            <Link href={`/orientations/nouvelle?patient=${patient.id}`}>
               <Button variant="outline" size="sm">
+                <Share2 className="h-4 w-4" />
+                Orienter
+              </Button>
+            </Link>
+            <Link href={`/patients/${patient.id}/modifier`}>
+              <Button variant="ghost" size="sm">
                 <Pencil className="h-4 w-4" />
                 Modifier
               </Button>

@@ -116,3 +116,122 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #a7c6c6;
 }
+
+/* ───────────────────────────────────────────────────────────
+   Animations — soignées et discrètes (WCAG : reduced-motion)
+   ─────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Révélation au montage — appliquée via .reveal ; le délai en ligne
+   (style={{animationDelay}}) crée l'effet d'apparition en cascade. */
+.reveal {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.reveal-fade {
+  animation: fadeIn 0.5s ease both;
+}
+.reveal-scale {
+  animation: scaleIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Effet de survol « lift » pour les cartes cliquables */
+.card-hover {
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.2s ease;
+  will-change: transform;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 24px -12px rgba(8, 145, 178, 0.25),
+    0 4px 8px -4px rgba(15, 43, 42, 0.08);
+}
+
+/* Barre de progression animée (jauges de stock) */
+@keyframes growWidth {
+  from {
+    width: 0;
+  }
+}
+.bar-grow {
+  animation: growWidth 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Squelette de chargement */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-fade,
+  .reveal-scale,
+  .bar-grow,
+  .skeleton::after {
+    animation: none !important;
+  }
+  .card-hover:hover {
+    transform: none;
+  }
+}

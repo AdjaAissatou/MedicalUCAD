@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
+import { Reveal } from "@/components/reveal";
 import { initiales, formatDate } from "@/lib/utils";
-import { Stethoscope } from "lucide-react";
+import { Stethoscope, Plus, Pencil } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -20,20 +22,34 @@ export default async function ConsultationsPage() {
       <PageHeader
         title="Consultations"
         description="Historique des consultations réalisées par le service médical."
-      />
+      >
+        <Link href="/consultations/nouvelle">
+          <Button variant="accent">
+            <Plus className="h-4 w-4" />
+            Nouvelle consultation
+          </Button>
+        </Link>
+      </PageHeader>
 
       {consultations.length === 0 ? (
         <EmptyState
           icon={Stethoscope}
           title="Aucune consultation"
           description="Les consultations réalisées lors des rendez-vous apparaîtront ici."
-        />
+        >
+          <Link href="/consultations/nouvelle">
+            <Button variant="accent">
+              <Plus className="h-4 w-4" />
+              Nouvelle consultation
+            </Button>
+          </Link>
+        </EmptyState>
       ) : (
         <Card>
           <CardContent className="p-2">
             <ul className="divide-y divide-border">
-              {consultations.map((c) => (
-                <li key={c.id} className="px-3 py-3">
+              {consultations.map((c, i) => (
+                <Reveal as="li" key={c.id} index={i} variant="fade" className="px-3 py-3">
                   <div className="flex items-start gap-3">
                     <Link
                       href={`/patients/${c.patientId}`}
@@ -49,9 +65,18 @@ export default async function ConsultationsPage() {
                         >
                           {c.patient.prenom} {c.patient.nom}
                         </Link>
-                        <span className="shrink-0 text-xs text-muted-foreground">
-                          {formatDate(c.date)}
-                        </span>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span className="text-xs text-muted-foreground">
+                            {formatDate(c.date)}
+                          </span>
+                          <Link
+                            href={`/consultations/${c.id}/modifier`}
+                            className="text-muted-foreground hover:text-primary"
+                            aria-label="Modifier la consultation"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Link>
+                        </div>
                       </div>
                       <p className="text-sm text-foreground">
                         {c.motif ?? "Consultation"}
@@ -67,7 +92,7 @@ export default async function ConsultationsPage() {
                       </p>
                     </div>
                   </div>
-                </li>
+                </Reveal>
               ))}
             </ul>
           </CardContent>

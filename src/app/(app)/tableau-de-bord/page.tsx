@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { Reveal } from "@/components/reveal";
+import { AnimatedNumber } from "@/components/animated-number";
 import { formatHeure, initiales } from "@/lib/utils";
 import { STATUT_RDV_LABELS, STATUT_RDV_VARIANTS } from "@/lib/constants";
 import {
@@ -101,25 +103,27 @@ export default async function TableauDeBord() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((s) => (
-          <Link key={s.label} href={s.href}>
-            <Card className="transition-shadow hover:shadow-md">
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <div
-                    className={`flex h-11 w-11 items-center justify-center rounded-lg ${s.color}`}
-                  >
-                    <s.icon className="h-5 w-5" />
+        {stats.map((s, i) => (
+          <Reveal key={s.label} index={i}>
+            <Link href={s.href}>
+              <Card className="card-hover">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center rounded-lg ${s.color}`}
+                    >
+                      <s.icon className="h-5 w-5" />
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <p className="mt-4 text-3xl font-bold text-foreground">
-                  {s.value}
-                </p>
-                <p className="text-sm text-muted-foreground">{s.label}</p>
-              </CardContent>
-            </Card>
-          </Link>
+                  <p className="mt-4 text-3xl font-bold text-foreground">
+                    <AnimatedNumber value={s.value} />
+                  </p>
+                  <p className="text-sm text-muted-foreground">{s.label}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </Reveal>
         ))}
       </div>
 
