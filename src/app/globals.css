@@ -391,3 +391,46 @@ body {
     opacity: 0.5;
   }
 }
+
+/* ───────────────────────────────────────────────────────────
+   Révélation au défilement (IntersectionObserver → .is-visible)
+   Contrairement à .reveal (au montage), ces états s'animent quand
+   l'élément entre dans le viewport pendant le scroll.
+   ─────────────────────────────────────────────────────────── */
+.sr {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.sr-left {
+  transform: translateX(-48px);
+}
+.sr-right {
+  transform: translateX(48px);
+}
+.sr-scale {
+  transform: scale(0.92);
+}
+.sr-fade {
+  transform: none;
+}
+.sr.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Bande de séparation en dégradé (transitions de sections) */
+.section-fade-top {
+  background: linear-gradient(to bottom, #062e2c, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sr {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
