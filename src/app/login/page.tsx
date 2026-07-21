@@ -114,6 +114,7 @@ export default async function LoginPage() {
             </p>
             <p>Administrateur — admin@ucad.edu.sn / passer123</p>
             <p>Médecin — medecin@ucad.edu.sn / passer123</p>
+            <p>Étudiant — aissatou.faye@ucad.edu.sn / passer123</p>
           </div>
         </div>
       </div>

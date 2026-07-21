@@ -168,6 +168,18 @@ async function main() {
     n++;
   }
 
+  console.log("🎓 Création d'un accès étudiant de démonstration…");
+  await prisma.user.create({
+    data: {
+      email: "aissatou.faye@ucad.edu.sn",
+      motDePasse,
+      nom: patients[0].nom,
+      prenom: patients[0].prenom,
+      role: "ETUDIANT",
+      patientId: patients[0].id,
+    },
+  });
+
   console.log("📅 Création des rendez-vous…");
   await prisma.rendezVous.createMany({
     data: [
@@ -326,8 +338,9 @@ async function main() {
   });
 
   console.log("✅ Données de démonstration créées avec succès.");
-  console.log("   Connexion : admin@ucad.edu.sn / passer123");
-  console.log("   Connexion : medecin@ucad.edu.sn / passer123");
+  console.log("   Personnel   : admin@ucad.edu.sn / passer123");
+  console.log("   Personnel   : medecin@ucad.edu.sn / passer123");
+  console.log("   Étudiant    : aissatou.faye@ucad.edu.sn / passer123");
   void admin;
 }
 

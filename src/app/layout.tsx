@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Figtree } from "next/font/google";
 import "./globals.css";
+import { PwaRegister } from "@/components/pwa-register";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -12,6 +13,23 @@ export const metadata: Metadata = {
   title: "UCAD Santé — Services Médicaux",
   description:
     "Plateforme de gestion des services médicaux de l'Université Cheikh Anta Diop de Dakar : dossiers médicaux, rendez-vous, consultations, orientations et pharmacie.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "UCAD Santé",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0891b2",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -21,7 +39,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${figtree.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        <PwaRegister />
+      </body>
     </html>
   );
 }

@@ -5,6 +5,16 @@ export function estAdmin(user: Pick<SessionUser, "role"> | null): boolean {
   return user?.role === "ADMIN";
 }
 
+/** Compte étudiant (espace self-service, accès à son propre dossier). */
+export function estEtudiant(user: Pick<SessionUser, "role"> | null): boolean {
+  return user?.role === "ETUDIANT";
+}
+
+/** Membre du personnel (tout rôle sauf étudiant). */
+export function estPersonnel(user: Pick<SessionUser, "role"> | null): boolean {
+  return !!user && user.role !== "ETUDIANT";
+}
+
 /** Peut réaliser des actes médicaux (consultations, orientations, ordonnances). */
 export function estSoignant(user: Pick<SessionUser, "role"> | null): boolean {
   return (

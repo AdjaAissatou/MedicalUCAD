@@ -14,7 +14,12 @@ export const ROLE_LABELS: Record<string, string> = {
   PHARMACIEN: "Pharmacien",
   INFIRMIER: "Infirmier",
   SECRETAIRE: "Secrétaire",
+  ETUDIANT: "Étudiant",
 };
+
+// Rôle réservé aux comptes self-service liés à un dossier patient.
+// Non proposé dans le formulaire de création d'utilisateur du personnel.
+export const ROLE_ETUDIANT = "ETUDIANT";
 
 export const TYPES_PATIENT = ["ETUDIANT", "PERSONNEL", "AUTRE"] as const;
 

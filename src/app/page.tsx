@@ -87,7 +87,9 @@ const STATS = [
 
 export default async function Home() {
   const user = await getSessionUser();
-  if (user) redirect("/tableau-de-bord");
+  if (user) {
+    redirect(user.role === "ETUDIANT" ? "/espace-etudiant" : "/tableau-de-bord");
+  }
 
   return (
     <div className="relative bg-background">

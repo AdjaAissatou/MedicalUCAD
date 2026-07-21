@@ -34,6 +34,7 @@ export type SessionUser = {
   prenom: string;
   role: string;
   specialite: string | null;
+  patientId: string | null; // renseigné pour les comptes ETUDIANT
 };
 
 function sign(value: string): string {
@@ -98,6 +99,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
         prenom: true,
         role: true,
         specialite: true,
+        patientId: true,
         actif: true,
       },
     });

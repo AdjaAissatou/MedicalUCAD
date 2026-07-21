@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { AccesEtudiantCard } from "@/components/patients/acces-etudiant-card";
 import { initiales, age, formatDate, formatDateHeure } from "@/lib/utils";
 import {
   TYPE_PATIENT_LABELS,
@@ -58,6 +59,7 @@ export default async function PatientDetail({
     where: { id },
     include: {
       dossier: true,
+      compte: { select: { email: true, actif: true } },
       consultations: {
         include: { medecin: true },
         orderBy: { date: "desc" },
@@ -206,6 +208,12 @@ export default async function PatientDetail({
               </div>
             </CardContent>
           </Card>
+
+          <AccesEtudiantCard
+            patientId={patient.id}
+            emailPatient={patient.email}
+            compte={patient.compte}
+          />
         </div>
 
         {/* Colonne principale */}

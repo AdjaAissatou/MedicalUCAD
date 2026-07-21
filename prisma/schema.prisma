@@ -29,6 +29,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Lien vers le dossier patient pour les comptes ETUDIANT (self-service).
+  patientId String?  @unique
+  patient   Patient? @relation("CompteEtudiant", fields: [patientId], references: [id], onDelete: Cascade)
+
   rendezVous    RendezVous[]   @relation("MedecinRendezVous")
   consultations Consultation[] @relation("MedecinConsultations")
   orientations  Orientation[]  @relation("MedecinOrientations")
@@ -54,6 +58,7 @@ model Patient {
   updatedAt    DateTime  @updatedAt
 
   dossier       DossierMedical?
+  compte        User?           @relation("CompteEtudiant")
   rendezVous    RendezVous[]
   consultations Consultation[]
   orientations  Orientation[]

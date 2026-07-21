@@ -57,7 +57,7 @@ export async function loginAction(
 
   reinitialiserLimite(cle);
   await createSession(user.id);
-  redirect("/tableau-de-bord");
+  redirect(user.role === "ETUDIANT" ? "/espace-etudiant" : "/tableau-de-bord");
 }
 
 export async function logoutAction() {
