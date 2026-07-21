@@ -48,8 +48,8 @@ export function LoginForm() {
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={pending}>
-        <LogIn className="h-4 w-4" />
+      <Button type="submit" className="w-full" loading={pending}>
+        {!pending && <LogIn className="h-4 w-4" />}
         {pending ? "Connexion…" : "Se connecter"}
       </Button>
     </form>

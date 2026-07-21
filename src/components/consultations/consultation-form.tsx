@@ -271,13 +271,11 @@ export function ConsultationForm({
       </Card>
 
       <div className="flex items-center justify-end gap-3">
-        <Link href={cancelHref}>
-          <Button type="button" variant="outline">
-            Annuler
-          </Button>
-        </Link>
-        <Button type="submit" variant="accent" disabled={pending}>
-          <Save className="h-4 w-4" />
+        <Button asChild variant="outline">
+          <Link href={cancelHref}>Annuler</Link>
+        </Button>
+        <Button type="submit" variant="accent" loading={pending}>
+          {!pending && <Save className="h-4 w-4" />}
           {pending ? "Enregistrement…" : submitLabel}
         </Button>
       </div>
