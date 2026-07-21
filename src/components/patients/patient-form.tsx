@@ -42,9 +42,19 @@ export type PatientInitial = {
   observations?: string | null;
 };
 
-function FieldError({ errors }: { errors?: string[] }) {
+function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
   if (!errors?.length) return null;
-  return <p className="text-xs text-destructive mt-1">{errors[0]}</p>;
+  return (
+    <p id={id} role="alert" className="mt-1 text-xs text-destructive">
+      {errors[0]}
+    </p>
+  );
+}
+
+/** Props d'accessibilité pour lier un champ à son message d'erreur. */
+function errorProps(field: string, errors?: string[]) {
+  if (!errors?.length) return {};
+  return { "aria-invalid": true, "aria-describedby": `${field}-error` } as const;
 }
 
 export function PatientForm({
@@ -80,16 +90,20 @@ export function PatientForm({
         </CardHeader>
         <CardContent className="grid gap-5 sm:grid-cols-2">
           <div>
-            <Label htmlFor="matricule">Matricule / N° étudiant *</Label>
+            <Label htmlFor="matricule" required>
+              Matricule / N° étudiant
+            </Label>
             <Input
               id="matricule"
               name="matricule"
               defaultValue={initial.matricule}
               placeholder="Ex : 20231234"
               required
+              autoComplete="off"
               className="mt-1.5"
+              {...errorProps("matricule", fe.matricule)}
             />
-            <FieldError errors={fe.matricule} />
+            <FieldError id="matricule-error" errors={fe.matricule} />
           </div>
           <div>
             <Label htmlFor="type">Type *</Label>
@@ -107,26 +121,34 @@ export function PatientForm({
             </Select>
           </div>
           <div>
-            <Label htmlFor="prenom">Prénom *</Label>
+            <Label htmlFor="prenom" required>
+              Prénom
+            </Label>
             <Input
               id="prenom"
               name="prenom"
               defaultValue={initial.prenom}
               required
+              autoComplete="given-name"
               className="mt-1.5"
+              {...errorProps("prenom", fe.prenom)}
             />
-            <FieldError errors={fe.prenom} />
+            <FieldError id="prenom-error" errors={fe.prenom} />
           </div>
           <div>
-            <Label htmlFor="nom">Nom *</Label>
+            <Label htmlFor="nom" required>
+              Nom
+            </Label>
             <Input
               id="nom"
               name="nom"
               defaultValue={initial.nom}
               required
+              autoComplete="family-name"
               className="mt-1.5"
+              {...errorProps("nom", fe.nom)}
             />
-            <FieldError errors={fe.nom} />
+            <FieldError id="nom-error" errors={fe.nom} />
           </div>
           <div>
             <Label htmlFor="dateNaissance">Date de naissance</Label>
@@ -181,6 +203,9 @@ export function PatientForm({
             <Input
               id="telephone"
               name="telephone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
               defaultValue={initial.telephone ?? ""}
               placeholder="+221 77 000 00 00"
               className="mt-1.5"
@@ -192,10 +217,13 @@ export function PatientForm({
               id="email"
               name="email"
               type="email"
+              inputMode="email"
+              autoComplete="email"
               defaultValue={initial.email ?? ""}
               className="mt-1.5"
+              {...errorProps("email", fe.email)}
             />
-            <FieldError errors={fe.email} />
+            <FieldError id="email-error" errors={fe.email} />
           </div>
           <div className="sm:col-span-2">
             <Label htmlFor="adresse">Adresse</Label>
@@ -292,13 +320,11 @@ export function PatientForm({
       </Card>
 
       <div className="flex items-center justify-end gap-3">
-        <Link href={cancelHref}>
-          <Button type="button" variant="outline">
-            Annuler
-          </Button>
-        </Link>
-        <Button type="submit" variant="accent" disabled={pending}>
-          <Save className="h-4 w-4" />
+        <Button asChild variant="outline">
+          <Link href={cancelHref}>Annuler</Link>
+        </Button>
+        <Button type="submit" variant="accent" loading={pending}>
+          {!pending && <Save className="h-4 w-4" />}
           {pending ? "Enregistrement…" : submitLabel}
         </Button>
       </div>

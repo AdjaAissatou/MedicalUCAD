@@ -13,9 +13,19 @@ import { AlertCircle, CalendarPlus } from "lucide-react";
 
 type Option = { id: string; label: string; sous?: string };
 
-function FieldError({ errors }: { errors?: string[] }) {
+function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
   if (!errors?.length) return null;
-  return <p className="text-xs text-destructive mt-1">{errors[0]}</p>;
+  return (
+    <p id={id} role="alert" className="mt-1 text-xs text-destructive">
+      {errors[0]}
+    </p>
+  );
+}
+
+/** Props d'accessibilité pour lier un champ à son message d'erreur. */
+function errorProps(field: string, errors?: string[]) {
+  if (!errors?.length) return {};
+  return { "aria-invalid": true, "aria-describedby": `${field}-error` } as const;
 }
 
 export function RdvForm({
@@ -50,13 +60,16 @@ export function RdvForm({
           )}
 
           <div className="sm:col-span-2">
-            <Label htmlFor="patientId">Patient *</Label>
+            <Label htmlFor="patientId" required>
+              Patient
+            </Label>
             <Select
               id="patientId"
               name="patientId"
               defaultValue={patientPreselect ?? ""}
               className="mt-1.5"
               required
+              {...errorProps("patientId", fe.patientId)}
             >
               <option value="" disabled>
                 Sélectionner un patient…
@@ -68,17 +81,20 @@ export function RdvForm({
                 </option>
               ))}
             </Select>
-            <FieldError errors={fe.patientId} />
+            <FieldError id="patientId-error" errors={fe.patientId} />
           </div>
 
           <div className="sm:col-span-2">
-            <Label htmlFor="medecinId">Médecin *</Label>
+            <Label htmlFor="medecinId" required>
+              Médecin
+            </Label>
             <Select
               id="medecinId"
               name="medecinId"
               defaultValue=""
               className="mt-1.5"
               required
+              {...errorProps("medecinId", fe.medecinId)}
             >
               <option value="" disabled>
                 Sélectionner un médecin…
@@ -90,11 +106,13 @@ export function RdvForm({
                 </option>
               ))}
             </Select>
-            <FieldError errors={fe.medecinId} />
+            <FieldError id="medecinId-error" errors={fe.medecinId} />
           </div>
 
           <div>
-            <Label htmlFor="date">Date *</Label>
+            <Label htmlFor="date" required>
+              Date
+            </Label>
             <Input
               id="date"
               name="date"
@@ -103,13 +121,16 @@ export function RdvForm({
               defaultValue={aujourdhui}
               className="mt-1.5"
               required
+              {...errorProps("date", fe.date)}
             />
-            <FieldError errors={fe.date} />
+            <FieldError id="date-error" errors={fe.date} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="heure">Heure *</Label>
+              <Label htmlFor="heure" required>
+                Heure
+              </Label>
               <Input
                 id="heure"
                 name="heure"
@@ -117,8 +138,9 @@ export function RdvForm({
                 defaultValue="09:00"
                 className="mt-1.5"
                 required
+                {...errorProps("heure", fe.heure)}
               />
-              <FieldError errors={fe.heure} />
+              <FieldError id="heure-error" errors={fe.heure} />
             </div>
             <div>
               <Label htmlFor="duree">Durée (min)</Label>
@@ -155,13 +177,11 @@ export function RdvForm({
       </Card>
 
       <div className="mt-6 flex items-center justify-end gap-3">
-        <Link href="/rendez-vous">
-          <Button type="button" variant="outline">
-            Annuler
-          </Button>
-        </Link>
-        <Button type="submit" variant="accent" disabled={pending}>
-          <CalendarPlus className="h-4 w-4" />
+        <Button asChild variant="outline">
+          <Link href="/rendez-vous">Annuler</Link>
+        </Button>
+        <Button type="submit" variant="accent" loading={pending}>
+          {!pending && <CalendarPlus className="h-4 w-4" />}
           {pending ? "Enregistrement…" : "Planifier le rendez-vous"}
         </Button>
       </div>
