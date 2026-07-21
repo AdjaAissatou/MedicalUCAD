@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* ───────────────────────────────────────────────────────────
+   UCAD Santé — Design System
+   Style : « Accessible & Ethical » (WCAG AAA)
+   Palette : teal médical + vert santé
+   Typographie : Figtree / Noto Sans
+   ─────────────────────────────────────────────────────────── */
+
+:root {
+  --background: #f7fbfb;
+  --foreground: #0f2b2a;
+
+  --card: #ffffff;
+  --card-foreground: #0f2b2a;
+
+  --primary: #0891b2; /* teal médical */
+  --primary-foreground: #ffffff;
+  --primary-hover: #0e7490;
+
+  --secondary: #ecfeff; /* cyan très clair */
+  --secondary-foreground: #134e4a;
+
+  --accent: #16a34a; /* vert santé (CTA) */
+  --accent-foreground: #ffffff;
+  --accent-hover: #15803d;
+
+  --muted: #eef4f5;
+  --muted-foreground: #55716f;
+
+  --border: #d5e6e6;
+  --input: #d5e6e6;
+  --ring: #0891b2;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --warning: #d97706;
+  --warning-foreground: #ffffff;
+
+  --success: #16a34a;
+  --info: #0891b2;
+
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-info: var(--info);
+
+  --font-sans: var(--font-figtree), system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus visible accessible (3px, exigence WCAG) */
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Barre de défilement discrète */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3d9d9;
+  border-radius: 9999px;
+  border: 2px solid var(--background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a7c6c6;
+}

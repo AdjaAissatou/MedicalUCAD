@@ -1,0 +1,203 @@
+// Schéma de base de données — Gestion des Services Médicaux UCAD
+// Provider: SQLite en développement. Pour la production, remplacer par
+// provider = "postgresql" et définir DATABASE_URL vers votre instance PostgreSQL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Utilisateurs & authentification
+// Rôles (String, validés côté application) :
+//   ADMIN | MEDECIN | PHARMACIEN | INFIRMIER | SECRETAIRE
+// ─────────────────────────────────────────────────────────────
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  motDePasse   String
+  nom          String
+  prenom       String
+  role         String   @default("SECRETAIRE")
+  specialite   String? // pour les médecins (ex: Généraliste, Dentiste)
+  telephone    String?
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  rendezVous    RendezVous[]   @relation("MedecinRendezVous")
+  consultations Consultation[] @relation("MedecinConsultations")
+  orientations  Orientation[]  @relation("MedecinOrientations")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Patients (étudiants & personnels UCAD)
+// ─────────────────────────────────────────────────────────────
+model Patient {
+  id           String    @id @default(cuid())
+  matricule    String    @unique // n° étudiant ou matricule personnel
+  nom          String
+  prenom       String
+  dateNaissance DateTime?
+  sexe         String? // M | F
+  telephone    String?
+  email        String?
+  adresse      String?
+  type         String    @default("ETUDIANT") // ETUDIANT | PERSONNEL | AUTRE
+  faculte      String? // Faculté ou service de rattachement
+  photoUrl     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  dossier       DossierMedical?
+  rendezVous    RendezVous[]
+  consultations Consultation[]
+  orientations  Orientation[]
+  ordonnances   Ordonnance[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// Dossier médical (1–1 avec Patient)
+// ─────────────────────────────────────────────────────────────
+model DossierMedical {
+  id                     String   @id @default(cuid())
+  numeroDossier          String   @unique
+  patientId              String   @unique
+  patient                Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  groupeSanguin          String? // A+, O-, ...
+  allergies              String? // texte libre
+  antecedentsMedicaux    String?
+  antecedentsChirurgicaux String?
+  antecedentsFamiliaux   String?
+  traitementEnCours      String?
+  observations           String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────
+// Rendez-vous
+// Statut : PLANIFIE | CONFIRME | EN_COURS | TERMINE | ANNULE | ABSENT
+// ─────────────────────────────────────────────────────────────
+model RendezVous {
+  id        String   @id @default(cuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  medecinId String
+  medecin   User     @relation("MedecinRendezVous", fields: [medecinId], references: [id])
+  dateHeure DateTime
+  duree     Int      @default(30) // minutes
+  motif     String?
+  statut    String   @default("PLANIFIE")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  consultation Consultation?
+
+  @@index([dateHeure])
+  @@index([medecinId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Consultations
+// ─────────────────────────────────────────────────────────────
+model Consultation {
+  id           String      @id @default(cuid())
+  patientId    String
+  patient      Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  medecinId    String
+  medecin      User        @relation("MedecinConsultations", fields: [medecinId], references: [id])
+  rendezVousId String?     @unique
+  rendezVous   RendezVous? @relation(fields: [rendezVousId], references: [id])
+  date         DateTime    @default(now())
+  motif        String?
+  symptomes    String?
+  diagnostic   String?
+  traitement   String?
+  observations String?
+  // Constantes / signes vitaux
+  poids        Float?
+  taille       Float?
+  temperature  Float?
+  tensionArt   String? // ex: 12/8
+  pouls        Int?
+  createdAt    DateTime    @default(now())
+
+  ordonnances  Ordonnance[]
+  orientations Orientation[]
+
+  @@index([patientId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Orientations / redirections vers spécialistes
+// Statut : EN_ATTENTE | REALISEE | ANNULEE
+// ─────────────────────────────────────────────────────────────
+model Orientation {
+  id             String        @id @default(cuid())
+  patientId      String
+  patient        Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  medecinId      String
+  medecin        User          @relation("MedecinOrientations", fields: [medecinId], references: [id])
+  consultationId String?
+  consultation   Consultation? @relation(fields: [consultationId], references: [id])
+  serviceCible   String // ex: Cardiologie, Hôpital Fann
+  motif          String
+  statut         String        @default("EN_ATTENTE")
+  date           DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+}
+
+// ─────────────────────────────────────────────────────────────
+// Pharmacie — Médicaments (stock)
+// ─────────────────────────────────────────────────────────────
+model Medicament {
+  id            String   @id @default(cuid())
+  nom           String
+  dci           String? // dénomination commune internationale
+  forme         String? // comprimé, sirop, injectable...
+  dosage        String?
+  stock         Int      @default(0)
+  seuilAlerte   Int      @default(10)
+  prix          Float    @default(0)
+  datePeremption DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lignesOrdonnance LigneOrdonnance[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// Ordonnances & lignes d'ordonnance
+// Statut : EN_ATTENTE | DELIVREE | PARTIELLE | ANNULEE
+// ─────────────────────────────────────────────────────────────
+model Ordonnance {
+  id             String        @id @default(cuid())
+  patientId      String
+  patient        Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  consultationId String?
+  consultation   Consultation? @relation(fields: [consultationId], references: [id])
+  statut         String        @default("EN_ATTENTE")
+  date           DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+
+  lignes LigneOrdonnance[]
+}
+
+model LigneOrdonnance {
+  id           String      @id @default(cuid())
+  ordonnanceId String
+  ordonnance   Ordonnance  @relation(fields: [ordonnanceId], references: [id], onDelete: Cascade)
+  medicamentId String?
+  medicament   Medicament? @relation(fields: [medicamentId], references: [id])
+  designation  String // libellé du médicament (au cas où hors stock)
+  posologie    String?
+  duree        String?
+  quantite     Int         @default(1)
+  delivre      Boolean     @default(false)
+}
