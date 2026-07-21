@@ -25,9 +25,19 @@ export type MedicamentInitial = {
   datePeremption?: string;
 };
 
-function FieldError({ errors }: { errors?: string[] }) {
+function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
   if (!errors?.length) return null;
-  return <p className="mt-1 text-xs text-destructive">{errors[0]}</p>;
+  return (
+    <p id={id} role="alert" className="mt-1 text-xs text-destructive">
+      {errors[0]}
+    </p>
+  );
+}
+
+/** Props d'accessibilité pour lier un champ à son message d'erreur. */
+function errorProps(field: string, errors?: string[]) {
+  if (!errors?.length) return {};
+  return { "aria-invalid": true, "aria-describedby": `${field}-error` } as const;
 }
 
 export function MedicamentForm({
@@ -60,7 +70,9 @@ export function MedicamentForm({
           )}
 
           <div className="sm:col-span-2">
-            <Label htmlFor="nom">Nom commercial *</Label>
+            <Label htmlFor="nom" required>
+              Nom commercial
+            </Label>
             <Input
               id="nom"
               name="nom"
@@ -68,8 +80,9 @@ export function MedicamentForm({
               required
               placeholder="Ex : Doliprane 500mg"
               className="mt-1.5"
+              {...errorProps("nom", fe.nom)}
             />
-            <FieldError errors={fe.nom} />
+            <FieldError id="nom-error" errors={fe.nom} />
           </div>
           <div>
             <Label htmlFor="dci">DCI (molécule)</Label>
@@ -119,8 +132,9 @@ export function MedicamentForm({
               inputMode="numeric"
               defaultValue={initial.stock ?? 0}
               className="mt-1.5"
+              {...errorProps("stock", fe.stock)}
             />
-            <FieldError errors={fe.stock} />
+            <FieldError id="stock-error" errors={fe.stock} />
           </div>
           <div>
             <Label htmlFor="seuilAlerte">Seuil d&apos;alerte</Label>

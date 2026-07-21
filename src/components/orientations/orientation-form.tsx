@@ -16,9 +16,19 @@ import { AlertCircle, Share2 } from "lucide-react";
 
 type Option = { id: string; label: string; sous?: string };
 
-function FieldError({ errors }: { errors?: string[] }) {
+function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
   if (!errors?.length) return null;
-  return <p className="mt-1 text-xs text-destructive">{errors[0]}</p>;
+  return (
+    <p id={id} role="alert" className="mt-1 text-xs text-destructive">
+      {errors[0]}
+    </p>
+  );
+}
+
+/** Props d'accessibilité pour lier un champ à son message d'erreur. */
+function errorProps(field: string, errors?: string[]) {
+  if (!errors?.length) return {};
+  return { "aria-invalid": true, "aria-describedby": `${field}-error` } as const;
 }
 
 export function OrientationForm({
@@ -51,13 +61,16 @@ export function OrientationForm({
           )}
 
           <div>
-            <Label htmlFor="patientId">Patient *</Label>
+            <Label htmlFor="patientId" required>
+              Patient
+            </Label>
             <Select
               id="patientId"
               name="patientId"
               defaultValue={patientPreselect ?? ""}
               required
               className="mt-1.5"
+              {...errorProps("patientId", fe.patientId)}
             >
               <option value="" disabled>
                 Sélectionner un patient…
@@ -69,17 +82,20 @@ export function OrientationForm({
                 </option>
               ))}
             </Select>
-            <FieldError errors={fe.patientId} />
+            <FieldError id="patientId-error" errors={fe.patientId} />
           </div>
 
           <div>
-            <Label htmlFor="medecinId">Médecin orienteur *</Label>
+            <Label htmlFor="medecinId" required>
+              Médecin orienteur
+            </Label>
             <Select
               id="medecinId"
               name="medecinId"
               defaultValue=""
               required
               className="mt-1.5"
+              {...errorProps("medecinId", fe.medecinId)}
             >
               <option value="" disabled>
                 Sélectionner un médecin…
@@ -91,31 +107,37 @@ export function OrientationForm({
                 </option>
               ))}
             </Select>
-            <FieldError errors={fe.medecinId} />
+            <FieldError id="medecinId-error" errors={fe.medecinId} />
           </div>
 
           <div>
-            <Label htmlFor="serviceCible">Service / structure de destination *</Label>
+            <Label htmlFor="serviceCible" required>
+              Service / structure de destination
+            </Label>
             <Input
               id="serviceCible"
               name="serviceCible"
               placeholder="Ex : Cardiologie — Hôpital Fann"
               required
               className="mt-1.5"
+              {...errorProps("serviceCible", fe.serviceCible)}
             />
-            <FieldError errors={fe.serviceCible} />
+            <FieldError id="serviceCible-error" errors={fe.serviceCible} />
           </div>
 
           <div>
-            <Label htmlFor="motif">Motif de l&apos;orientation *</Label>
+            <Label htmlFor="motif" required>
+              Motif de l&apos;orientation
+            </Label>
             <Textarea
               id="motif"
               name="motif"
               placeholder="Raison de la redirection vers ce service…"
               required
               className="mt-1.5"
+              {...errorProps("motif", fe.motif)}
             />
-            <FieldError errors={fe.motif} />
+            <FieldError id="motif-error" errors={fe.motif} />
           </div>
         </CardContent>
       </Card>

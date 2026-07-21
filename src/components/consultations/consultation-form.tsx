@@ -34,9 +34,19 @@ export type ConsultationInitial = {
   pouls?: number | null;
 };
 
-function FieldError({ errors }: { errors?: string[] }) {
+function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
   if (!errors?.length) return null;
-  return <p className="mt-1 text-xs text-destructive">{errors[0]}</p>;
+  return (
+    <p id={id} role="alert" className="mt-1 text-xs text-destructive">
+      {errors[0]}
+    </p>
+  );
+}
+
+/** Props d'accessibilité pour lier un champ à son message d'erreur. */
+function errorProps(field: string, errors?: string[]) {
+  if (!errors?.length) return {};
+  return { "aria-invalid": true, "aria-describedby": `${field}-error` } as const;
 }
 
 export function ConsultationForm({
@@ -88,7 +98,9 @@ export function ConsultationForm({
         </CardHeader>
         <CardContent className="grid gap-5 sm:grid-cols-2">
           <div>
-            <Label htmlFor="patientId">Patient *</Label>
+            <Label htmlFor="patientId" required>
+              Patient
+            </Label>
             {patientVerrouille && initial.patientId ? (
               <>
                 <input
@@ -107,6 +119,7 @@ export function ConsultationForm({
                 defaultValue={initial.patientId ?? ""}
                 required
                 className="mt-1.5"
+                {...errorProps("patientId", fe.patientId)}
               >
                 <option value="" disabled>
                   Sélectionner un patient…
@@ -119,16 +132,19 @@ export function ConsultationForm({
                 ))}
               </Select>
             )}
-            <FieldError errors={fe.patientId} />
+            <FieldError id="patientId-error" errors={fe.patientId} />
           </div>
           <div>
-            <Label htmlFor="medecinId">Médecin *</Label>
+            <Label htmlFor="medecinId" required>
+              Médecin
+            </Label>
             <Select
               id="medecinId"
               name="medecinId"
               defaultValue={initial.medecinId ?? ""}
               required
               className="mt-1.5"
+              {...errorProps("medecinId", fe.medecinId)}
             >
               <option value="" disabled>
                 Sélectionner un médecin…
@@ -140,7 +156,7 @@ export function ConsultationForm({
                 </option>
               ))}
             </Select>
-            <FieldError errors={fe.medecinId} />
+            <FieldError id="medecinId-error" errors={fe.medecinId} />
           </div>
           <div>
             <Label htmlFor="date">Date</Label>
