@@ -4,9 +4,28 @@ import crypto from "crypto";
 import { prisma } from "./prisma";
 
 const COOKIE_NAME = "ucad_session";
-const SECRET =
-  process.env.SESSION_SECRET ?? "ucad-sante-dev-secret-change-me-in-production";
 const MAX_AGE = 60 * 60 * 8; // 8 heures
+
+// En production, SESSION_SECRET est OBLIGATOIRE : on refuse de signer/vérifier
+// avec un secret par défaut afin d'éviter des sessions falsifiables.
+// Résolution paresseuse (à l'exécution) pour ne pas casser le build.
+let secretCache: string | null = null;
+function getSecret(): string {
+  if (secretCache) return secretCache;
+  const secret = process.env.SESSION_SECRET;
+  if (process.env.NODE_ENV === "production") {
+    if (!secret || secret.length < 32) {
+      throw new Error(
+        "SESSION_SECRET manquant ou trop court (>= 32 caractères requis) en production. " +
+          "Générez-en un avec : openssl rand -base64 48"
+      );
+    }
+    secretCache = secret;
+  } else {
+    secretCache = secret ?? "ucad-sante-dev-secret-change-me-in-production";
+  }
+  return secretCache;
+}
 
 export type SessionUser = {
   id: string;
@@ -18,7 +37,10 @@ export type SessionUser = {
 };
 
 function sign(value: string): string {
-  const sig = crypto.createHmac("sha256", SECRET).update(value).digest("base64url");
+  const sig = crypto
+    .createHmac("sha256", getSecret())
+    .update(value)
+    .digest("base64url");
   return `${value}.${sig}`;
 }
 
@@ -28,7 +50,7 @@ function verify(signed: string): string | null {
   const value = signed.slice(0, idx);
   const sig = signed.slice(idx + 1);
   const expected = crypto
-    .createHmac("sha256", SECRET)
+    .createHmac("sha256", getSecret())
     .update(value)
     .digest("base64url");
   const a = Buffer.from(sig);

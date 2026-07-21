@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
-import { PageHeader } from "@/components/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
@@ -71,6 +70,7 @@ export default async function TableauDeBord() {
       icon: Users,
       href: "/patients",
       color: "text-primary bg-primary/10",
+      accent: "from-cyan-400 to-primary",
     },
     {
       label: "Rendez-vous aujourd'hui",
@@ -78,6 +78,7 @@ export default async function TableauDeBord() {
       icon: CalendarCheck,
       href: "/rendez-vous",
       color: "text-accent bg-accent/10",
+      accent: "from-emerald-400 to-accent",
     },
     {
       label: "Consultations ce mois",
@@ -85,6 +86,7 @@ export default async function TableauDeBord() {
       icon: Stethoscope,
       href: "/consultations",
       color: "text-cyan-700 bg-cyan-100",
+      accent: "from-sky-400 to-cyan-600",
     },
     {
       label: "Alertes de stock",
@@ -92,29 +94,53 @@ export default async function TableauDeBord() {
       icon: Pill,
       href: "/pharmacie",
       color: "text-amber-700 bg-amber-100",
+      accent: "from-amber-300 to-amber-500",
     },
   ];
 
   return (
     <div>
-      <PageHeader
-        title={`Bonjour, ${user?.prenom} 👋`}
-        description="Voici un aperçu de l'activité du service médical aujourd'hui."
-      />
+      {/* En-tête premium */}
+      <div className="relative mb-6 overflow-hidden rounded-2xl bg-[#062e2c] p-6 sm:p-8 text-white rise">
+        <div className="aurora opacity-70" aria-hidden>
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="relative">
+          <p className="text-sm text-white/60">
+            {new Date().toLocaleDateString("fr-FR", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
+          <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
+            Bonjour, {user?.prenom} 👋
+          </h1>
+          <p className="mt-1 text-white/70">
+            Voici un aperçu de l&apos;activité du service médical aujourd&apos;hui.
+          </p>
+        </div>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((s, i) => (
           <Reveal key={s.label} index={i}>
             <Link href={s.href}>
-              <Card className="card-hover">
+              <Card className="card-hover group relative overflow-hidden">
+                <div
+                  className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${s.accent}`}
+                />
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div
-                      className={`flex h-11 w-11 items-center justify-center rounded-lg ${s.color}`}
+                      className={`flex h-11 w-11 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${s.color}`}
                     >
                       <s.icon className="h-5 w-5" />
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                   </div>
                   <p className="mt-4 text-3xl font-bold text-foreground">
                     <AnimatedNumber value={s.value} />
