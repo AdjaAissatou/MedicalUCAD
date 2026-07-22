@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef } from "react";
 import { crossState } from "@/components/landing/three/cross-state";
+import { useInView } from "@/components/landing/use-in-view";
 
 const CellsCrossScene = dynamic(
   () => import("@/components/landing/three/cells-cross-scene"),
@@ -16,6 +17,7 @@ const CellsCrossScene = dynamic(
  */
 export function CellsCross() {
   const section = useRef<HTMLElement>(null);
+  const active = useInView(section);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -51,7 +53,7 @@ export function CellsCross() {
     >
       <div className="sticky top-0 flex h-dvh flex-col items-center justify-start overflow-hidden pt-24">
         <div className="absolute inset-0" aria-hidden>
-          <CellsCrossScene />
+          <CellsCrossScene active={active} />
         </div>
         <div className="pointer-events-none relative z-10 max-w-2xl px-6 text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#7fffd4]">

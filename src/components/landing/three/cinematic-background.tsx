@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
 // Scène WebGL strictement côté client.
 const DnaScene = dynamic(() => import("./dna-scene"), {
@@ -10,14 +11,34 @@ const DnaScene = dynamic(() => import("./dna-scene"), {
 
 /**
  * Décor 3D fixe, plein écran, derrière tout le contenu (-z-10). Il ne s'affiche
- * que là où une section est transparente (le hero) : les sections opaques qui
- * défilent par-dessus donnent la transition « scène continue ». Le fond sombre
- * sert de repli si WebGL échoue. Couche de vignette pour la profondeur.
+ * que là où une section est transparente (le hero). Optimisation : la scène est
+ * mise en pause (frameloop) dès qu'on a défilé au-delà du hero — inutile de
+ * calculer une scène masquée par le contenu opaque.
  */
 export function CinematicBackground() {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      // actif tant que le hero (≈1,8 écran) est à l'écran
+      setActive(window.scrollY < window.innerHeight * 1.8);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 -z-10 bg-[#04211f]" aria-hidden>
-      <DnaScene />
+      <DnaScene active={active} />
       <div
         className="pointer-events-none absolute inset-0"
         style={{

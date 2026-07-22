@@ -158,14 +158,14 @@ function Rig() {
   return null;
 }
 
-export default function DnaScene() {
+export default function DnaScene({ active = true }: { active?: boolean }) {
   return (
     <Canvas
       shadows
       camera={{ position: [0, 0, 5.4], fov: 42 }}
       dpr={[1, 1.8]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
-      frameloop={REDUCED ? "demand" : "always"}
+      frameloop={REDUCED ? "demand" : active ? "always" : "never"}
     >
       <color attach="background" args={["#04211f"]} />
       <fog attach="fog" args={["#04211f", 6, 16]} />

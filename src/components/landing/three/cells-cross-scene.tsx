@@ -116,13 +116,17 @@ function Particles() {
   );
 }
 
-export default function CellsCrossScene() {
+export default function CellsCrossScene({
+  active = true,
+}: {
+  active?: boolean;
+}) {
   return (
     <Canvas
       camera={{ position: [0, 0, 7], fov: 45 }}
       dpr={[1, 1.8]}
       gl={{ alpha: true, antialias: true }}
-      frameloop={REDUCED ? "demand" : "always"}
+      frameloop={REDUCED ? "demand" : active ? "always" : "never"}
     >
       <Particles />
     </Canvas>

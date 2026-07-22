@@ -63,14 +63,14 @@ function FloatingPill(props: React.ComponentProps<typeof Pill>) {
   );
 }
 
-export default function PillsScene() {
+export default function PillsScene({ active = true }: { active?: boolean }) {
   return (
     <Canvas
       shadows
       camera={{ position: [0, 0, 6], fov: 42 }}
       dpr={[1, 1.8]}
       gl={{ alpha: true, antialias: true }}
-      frameloop={REDUCED ? "demand" : "always"}
+      frameloop={REDUCED ? "demand" : active ? "always" : "never"}
     >
       <ambientLight intensity={0.6} />
       <directionalLight
