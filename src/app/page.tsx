@@ -9,8 +9,10 @@ import { ScrollReveal } from "@/components/landing/scroll-reveal";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { ModulesPinned } from "@/components/landing/modules-pinned";
 import { PhotoShowcase } from "@/components/landing/photo-showcase";
+import { PharmacySection } from "@/components/landing/pharmacy-section";
 import { EcgInterlude } from "@/components/landing/ecg-interlude";
 import { Testimonials } from "@/components/landing/testimonials";
+import { CellsCross } from "@/components/landing/cells-cross";
 import { CountUp } from "@/components/landing/count-up";
 import { CinematicBackground } from "@/components/landing/three/cinematic-background";
 import {
@@ -98,6 +100,9 @@ export default async function Home() {
       {/* Sections photo (parallaxe) */}
       <PhotoShowcase />
 
+      {/* Pharmacie — gélules 3D */}
+      <PharmacySection />
+
       {/* Interlude ECG (se dessine au scroll) */}
       <EcgInterlude />
 
@@ -183,6 +188,9 @@ export default async function Home() {
 
       {/* Témoignages */}
       <Testimonials />
+
+      {/* Interlude 3D : cellules → croix médicale */}
+      <CellsCross />
 
       {/* Appel à l'action final */}
       <section className="px-6 pb-24">
