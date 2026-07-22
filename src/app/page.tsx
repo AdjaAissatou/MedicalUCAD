@@ -8,6 +8,7 @@ import { SmoothScroll } from "@/components/landing/smooth-scroll";
 import { ScrollReveal } from "@/components/landing/scroll-reveal";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { FeaturesBento } from "@/components/landing/features-bento";
+import { PhotoShowcase } from "@/components/landing/photo-showcase";
 import { CinematicBackground } from "@/components/landing/three/cinematic-background";
 import {
   HeartPulse,
@@ -88,6 +89,9 @@ export default async function Home() {
       <div className="relative bg-background">
       {/* Modules — section bento (composant 21st adapté) */}
       <FeaturesBento />
+
+      {/* Sections photo (parallaxe) */}
+      <PhotoShowcase />
 
       {/* Bande de statistiques */}
       <section className="relative overflow-hidden bg-[#062e2c] py-20 text-white">

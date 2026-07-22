@@ -41,7 +41,7 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 text-center text-white">
+    <section className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 text-center text-white lg:items-start lg:px-16 lg:text-left xl:px-24">
       {/* Couche de halo au premier plan (profondeur) */}
       <div
         ref={glowRef}
@@ -53,7 +53,10 @@ export function LandingHero() {
         }}
       />
 
-      <div ref={contentRef} className="relative z-10 max-w-3xl will-change-transform">
+      <div
+        ref={contentRef}
+        className="relative z-10 max-w-3xl will-change-transform lg:max-w-xl"
+      >
         <div className="rise inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white/85 ring-1 ring-white/15 backdrop-blur">
           <HeartPulse className="h-4 w-4" />
           Université Cheikh Anta Diop de Dakar
@@ -77,7 +80,7 @@ export function LandingHero() {
         </p>
 
         <div
-          className="rise mt-9 flex flex-wrap items-center justify-center gap-3"
+          className="rise mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start"
           style={{ animationDelay: "240ms" }}
         >
           <Button

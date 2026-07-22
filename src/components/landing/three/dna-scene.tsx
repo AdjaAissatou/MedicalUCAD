@@ -56,6 +56,9 @@ function Helix() {
     group.current.rotation.z = -0.12 + p * 0.25;
     const s = 1 + p * 0.18;
     group.current.scale.setScalar(s);
+    // décalée vers la droite sur grand écran (titre à gauche), centrée sur mobile
+    const targetX = state.size.width >= 1024 ? 2.2 : 0;
+    group.current.position.x += (targetX - group.current.position.x) * 0.08;
     group.current.position.y = p * 1.2;
   });
 
