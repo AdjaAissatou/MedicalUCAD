@@ -1,10 +1,23 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { Canvas } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
+import {
+  EffectComposer,
+  Bloom,
+  Vignette,
+  ToneMapping,
+} from "@react-three/postprocessing";
+import { ToneMappingMode } from "postprocessing";
 import { HospitalScene } from "./hospital-scene";
 import { ArrowRight, LogIn } from "lucide-react";
+
+// Post-traitement (bloom, vignette) : GPU-lourd. Désactivé par défaut pour
+// garantir un rendu sur tout matériel ; activable via NEXT_PUBLIC_HOSPITAL_FX=1
+// (à tester sur une vraie carte graphique).
+const FX = process.env.NEXT_PUBLIC_HOSPITAL_FX === "1";
 
 type Salle = {
   top: string;
@@ -63,13 +76,28 @@ export default function HospitalWalkthrough() {
   return (
     <div className="fixed inset-0 bg-[#dce8f4]">
       <Canvas
+        flat={FX}
         shadows
         dpr={[1, 1.8]}
         camera={{ position: [0, 1.55, 3], fov: 55, near: 0.1, far: 80 }}
         gl={{ antialias: true }}
       >
         <ScrollControls pages={7} damping={0.28}>
-          <HospitalScene />
+          <Suspense fallback={null}>
+            <HospitalScene />
+          </Suspense>
+          {FX && (
+            <EffectComposer>
+              <Bloom
+                intensity={0.6}
+                luminanceThreshold={0.8}
+                luminanceSmoothing={0.25}
+                mipmapBlur
+              />
+              <Vignette eskil={false} offset={0.2} darkness={0.5} />
+              <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+            </EffectComposer>
+          )}
           <Scroll html style={{ width: "100%" }}>
             {SALLES.map((s) => (
               <div
