@@ -26,8 +26,8 @@ const BLOCS: Bloc[] = [
       "Dossier médical accessible 24/7",
       "Rappels et suivi personnalisés",
     ],
-    img: `${U}1579684385127-1ef15d508118${Q}`,
-    alt: "Professionnel de santé accueillant un patient",
+    img: `${U}1541178735493-479c1a27ed24${Q}`,
+    alt: "Étudiant consultant son espace santé en ligne",
   },
   {
     eyebrow: "Coordination",
@@ -38,8 +38,8 @@ const BLOCS: Bloc[] = [
       "Orientations vers les structures externes",
       "Pharmacie et stocks reliés au dossier",
     ],
-    img: `${U}1631217868264-e5b90bb7e133${Q}`,
-    alt: "Équipe médicale en concertation",
+    img: `${U}1666214280557-f1b5022eb634${Q}`,
+    alt: "Soignants analysant un dossier médical",
     reverse: true,
   },
 ];
