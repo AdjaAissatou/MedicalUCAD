@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,12 +26,14 @@ export function Reveal({
         ? "reveal-scale"
         : "reveal";
 
-  return (
-    <Tag
-      className={cn(cls, className)}
-      style={{ animationDelay: `${Math.min(index, 12) * 60}ms` }}
-    >
-      {children}
-    </Tag>
+  // createElement plutôt que JSX : `@react-three/fiber` augmente l'espace JSX
+  // global, ce qui casse le typage d'un `as` polymorphe rendu en JSX.
+  return createElement(
+    Tag,
+    {
+      className: cn(cls, className),
+      style: { animationDelay: `${Math.min(index, 12) * 60}ms` },
+    },
+    children
   );
 }

@@ -9,9 +9,11 @@ const csp = [
     (process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""),
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob:",
+  // Images : origine + data/blob (canvas, WebGL) + hébergeur photo autorisé.
+  "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com",
   "connect-src 'self'",
-  "worker-src 'self'",
+  // blob: requis par certains workers de three.js / @react-three/drei.
+  "worker-src 'self' blob:",
   "manifest-src 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -39,6 +41,13 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false, // masque l'en-tête X-Powered-By
+  images: {
+    // Hébergeurs photo autorisés pour next/image (cohérent avec la CSP img-src).
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "plus.unsplash.com" },
+    ],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { HeroCanvas } from "@/components/landing/three/hero-canvas";
 import { HeartPulse, ArrowRight, ChevronDown, LogIn } from "lucide-react";
 
 /**
@@ -67,7 +68,10 @@ export function LandingHero() {
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[#062e2c]" />
       </div>
 
-      <div ref={contentRef} className="relative max-w-3xl will-change-transform">
+      {/* Scène 3D immersive (WebGL) — décor, non interactif */}
+      <HeroCanvas />
+
+      <div ref={contentRef} className="relative z-10 max-w-3xl will-change-transform">
         <div className="rise inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white/85 ring-1 ring-white/15 backdrop-blur">
           <HeartPulse className="h-4 w-4" />
           Université Cheikh Anta Diop de Dakar

@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollProgress } from "@/components/landing/scroll-progress";
+import { SmoothScroll } from "@/components/landing/smooth-scroll";
 import { ScrollReveal } from "@/components/landing/scroll-reveal";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { FeaturesBento } from "@/components/landing/features-bento";
@@ -55,6 +56,7 @@ export default async function Home() {
 
   return (
     <div className="relative bg-background">
+      <SmoothScroll />
       <ScrollProgress />
 
       {/* En-tête flottant */}
