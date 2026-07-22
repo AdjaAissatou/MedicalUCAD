@@ -6,14 +6,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { ScrollProgress } from "@/components/landing/scroll-progress";
 import { ScrollReveal } from "@/components/landing/scroll-reveal";
 import { LandingHero } from "@/components/landing/landing-hero";
+import { FeaturesBento } from "@/components/landing/features-bento";
 import {
   HeartPulse,
-  FolderHeart,
-  CalendarCheck,
-  Stethoscope,
-  Share2,
-  Pill,
-  LayoutDashboard,
   ShieldCheck,
   Zap,
   Activity,
@@ -21,39 +16,6 @@ import {
   ArrowRight,
   LogIn,
 } from "lucide-react";
-
-const MODULES = [
-  {
-    icon: FolderHeart,
-    titre: "Dossiers médicaux",
-    desc: "Fiches patients complètes : antécédents, allergies, groupe sanguin et historiques.",
-  },
-  {
-    icon: CalendarCheck,
-    titre: "Rendez-vous",
-    desc: "Planification, filtres, suivi des statuts et regroupement par jour.",
-  },
-  {
-    icon: Stethoscope,
-    titre: "Consultations",
-    desc: "Historique des consultations, constantes vitales et diagnostics.",
-  },
-  {
-    icon: Share2,
-    titre: "Orientations",
-    desc: "Redirections vers spécialistes et structures de soins externes.",
-  },
-  {
-    icon: Pill,
-    titre: "Pharmacie",
-    desc: "Stock, seuils d'alerte, ruptures et dates de péremption.",
-  },
-  {
-    icon: LayoutDashboard,
-    titre: "Tableau de bord",
-    desc: "Statistiques, rendez-vous du jour et alertes de pharmacie en un coup d'œil.",
-  },
-];
 
 const POURQUOI = [
   {
@@ -117,40 +79,8 @@ export default async function Home() {
 
       <LandingHero />
 
-      {/* Modules */}
-      <section id="modules" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-24">
-        <ScrollReveal className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-            La plateforme
-          </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Tout le parcours de soin, réuni
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Six modules qui couvrent l&apos;ensemble du service médical
-            universitaire, du premier rendez-vous à la délivrance des
-            médicaments.
-          </p>
-        </ScrollReveal>
-
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {MODULES.map((m, i) => (
-            <ScrollReveal key={m.titre} delay={(i % 3) * 90}>
-              <article className="card-hover glow-border group h-full rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <m.icon className="h-6 w-6" />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-foreground">
-                  {m.titre}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {m.desc}
-                </p>
-              </article>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
+      {/* Modules — section bento (composant 21st adapté) */}
+      <FeaturesBento />
 
       {/* Bande de statistiques */}
       <section className="relative overflow-hidden bg-[#062e2c] py-20 text-white">
