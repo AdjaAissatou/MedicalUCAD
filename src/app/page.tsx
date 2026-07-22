@@ -8,6 +8,7 @@ import { SmoothScroll } from "@/components/landing/smooth-scroll";
 import { ScrollReveal } from "@/components/landing/scroll-reveal";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { FeaturesBento } from "@/components/landing/features-bento";
+import { CinematicBackground } from "@/components/landing/three/cinematic-background";
 import {
   HeartPulse,
   ShieldCheck,
@@ -55,8 +56,9 @@ export default async function Home() {
   }
 
   return (
-    <div className="relative bg-background">
+    <div className="relative">
       <SmoothScroll />
+      <CinematicBackground />
       <ScrollProgress />
 
       {/* En-tête flottant */}
@@ -81,6 +83,9 @@ export default async function Home() {
 
       <LandingHero />
 
+      {/* Contenu opaque : couvre le décor 3D fixe et crée la transition
+          « scène continue » quand il défile par-dessus le hero. */}
+      <div className="relative bg-background">
       {/* Modules — section bento (composant 21st adapté) */}
       <FeaturesBento />
 
@@ -204,6 +209,7 @@ export default async function Home() {
           </p>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
