@@ -7,8 +7,11 @@ import { ScrollProgress } from "@/components/landing/scroll-progress";
 import { SmoothScroll } from "@/components/landing/smooth-scroll";
 import { ScrollReveal } from "@/components/landing/scroll-reveal";
 import { LandingHero } from "@/components/landing/landing-hero";
-import { FeaturesBento } from "@/components/landing/features-bento";
+import { ModulesPinned } from "@/components/landing/modules-pinned";
 import { PhotoShowcase } from "@/components/landing/photo-showcase";
+import { EcgInterlude } from "@/components/landing/ecg-interlude";
+import { Testimonials } from "@/components/landing/testimonials";
+import { CountUp } from "@/components/landing/count-up";
 import { CinematicBackground } from "@/components/landing/three/cinematic-background";
 import {
   HeartPulse,
@@ -43,11 +46,13 @@ const POURQUOI = [
   },
 ];
 
-const STATS = [
-  { valeur: "6", label: "modules intégrés" },
-  { valeur: "WCAG", label: "accessibilité visée" },
-  { valeur: "100%", label: "responsive" },
-  { valeur: "0", label: "ressaisie de données" },
+type Stat = { num?: number; suffix?: string; text?: string; label: string };
+
+const STATS: Stat[] = [
+  { num: 6, label: "modules intégrés" },
+  { text: "WCAG", label: "accessibilité visée" },
+  { num: 100, suffix: "%", label: "responsive" },
+  { text: "24/7", label: "accès en ligne" },
 ];
 
 export default async function Home() {
@@ -87,11 +92,14 @@ export default async function Home() {
       {/* Contenu opaque : couvre le décor 3D fixe et crée la transition
           « scène continue » quand il défile par-dessus le hero. */}
       <div className="relative bg-background">
-      {/* Modules — section bento (composant 21st adapté) */}
-      <FeaturesBento />
+      {/* Modules — section épinglée (défilement horizontal au scroll) */}
+      <ModulesPinned />
 
       {/* Sections photo (parallaxe) */}
       <PhotoShowcase />
+
+      {/* Interlude ECG (se dessine au scroll) */}
+      <EcgInterlude />
 
       {/* Bande de statistiques */}
       <section className="relative overflow-hidden bg-[#062e2c] py-20 text-white">
@@ -109,7 +117,11 @@ export default async function Home() {
               className="text-center"
             >
               <p className="text-gradient bg-clip-text text-4xl font-bold sm:text-5xl">
-                {s.valeur}
+                {s.num != null ? (
+                  <CountUp value={s.num} suffix={s.suffix ?? ""} />
+                ) : (
+                  s.text
+                )}
               </p>
               <p className="mt-2 text-sm text-white/70">{s.label}</p>
             </ScrollReveal>
@@ -168,6 +180,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Témoignages */}
+      <Testimonials />
 
       {/* Appel à l'action final */}
       <section className="px-6 pb-24">

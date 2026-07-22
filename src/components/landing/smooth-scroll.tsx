@@ -9,8 +9,9 @@ import { scrollState } from "@/components/landing/three/scroll-state";
 /**
  * Défilement cinématique :
  * - GSAP ScrollTrigger mappe le défilement du hero (≈1,4 écran) sur 0→1, ce qui
- *   pilote le zoom/échelle/rotation de la scène 3D (transition de scène continue).
- * - Lenis apporte l'inertie et se synchronise avec ScrollTrigger.
+ *   pilote le zoom/échelle/rotation de la scène 3D.
+ * - Lenis apporte l'inertie ; il est piloté par le ticker GSAP et synchronisé
+ *   avec ScrollTrigger (indispensable pour un épinglage fluide).
  * Désactivé sous prefers-reduced-motion (scène figée, défilement natif).
  */
 export function SmoothScroll() {
@@ -18,7 +19,6 @@ export function SmoothScroll() {
     gsap.registerPlugin(ScrollTrigger);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Progrès de scène : 0 en haut → 1 après ~1,4 écran de défilement.
     const st = ScrollTrigger.create({
       start: 0,
       end: () => window.innerHeight * 1.4,
@@ -28,19 +28,16 @@ export function SmoothScroll() {
     });
 
     let lenis: Lenis | undefined;
-    let raf = 0;
+    let ticker: ((time: number) => void) | undefined;
     let onClick: ((e: MouseEvent) => void) | undefined;
 
     if (!reduce) {
       lenis = new Lenis({ duration: 1.15, smoothWheel: true });
       lenis.on("scroll", ScrollTrigger.update);
-      const loop = (time: number) => {
-        lenis!.raf(time);
-        raf = requestAnimationFrame(loop);
-      };
-      raf = requestAnimationFrame(loop);
+      ticker = (time: number) => lenis!.raf(time * 1000);
+      gsap.ticker.add(ticker);
+      gsap.ticker.lagSmoothing(0);
 
-      // Défilement fluide vers les ancres internes.
       onClick = (e: MouseEvent) => {
         const a = (e.target as HTMLElement).closest(
           'a[href^="#"]'
@@ -60,10 +57,8 @@ export function SmoothScroll() {
     return () => {
       st.kill();
       if (onClick) document.removeEventListener("click", onClick);
-      if (lenis) {
-        cancelAnimationFrame(raf);
-        lenis.destroy();
-      }
+      if (ticker) gsap.ticker.remove(ticker);
+      if (lenis) lenis.destroy();
     };
   }, []);
 
