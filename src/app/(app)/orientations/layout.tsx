@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
-import { peutAccederModule } from "@/lib/authz";
+import { peutAccederModule, accueilParRole } from "@/lib/authz";
 
 // Garde d'accès au module « Orientations » (personnel soignant).
 export default async function OrientationsLayout({
@@ -10,6 +10,6 @@ export default async function OrientationsLayout({
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!peutAccederModule(user, "orientations")) redirect("/tableau-de-bord");
+  if (!peutAccederModule(user, "orientations")) redirect(accueilParRole(user));
   return <>{children}</>;
 }

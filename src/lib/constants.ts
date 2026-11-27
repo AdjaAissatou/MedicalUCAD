@@ -2,17 +2,21 @@ import type { BadgeProps } from "@/components/ui/badge";
 
 export const ROLES = [
   "ADMIN",
+  "DIRECTION",
   "MEDECIN",
-  "PHARMACIEN",
   "INFIRMIER",
+  "LABORANTIN",
+  "PHARMACIEN",
   "SECRETAIRE",
 ] as const;
 
 export const ROLE_LABELS: Record<string, string> = {
   ADMIN: "Administrateur",
+  DIRECTION: "Direction",
   MEDECIN: "Médecin",
-  PHARMACIEN: "Pharmacien",
   INFIRMIER: "Infirmier",
+  LABORANTIN: "Laborantin",
+  PHARMACIEN: "Pharmacien",
   SECRETAIRE: "Secrétaire",
   ETUDIANT: "Étudiant",
 };

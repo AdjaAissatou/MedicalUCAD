@@ -71,6 +71,50 @@ async function main() {
     },
   });
 
+  await prisma.user.create({
+    data: {
+      email: "direction@ucad.edu.sn",
+      motDePasse,
+      nom: "Sow",
+      prenom: "Awa",
+      role: "DIRECTION",
+      telephone: "+221 77 100 00 05",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "infirmier@ucad.edu.sn",
+      motDePasse,
+      nom: "Diouf",
+      prenom: "Khady",
+      role: "INFIRMIER",
+      telephone: "+221 77 100 00 06",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "laborantin@ucad.edu.sn",
+      motDePasse,
+      nom: "Kane",
+      prenom: "Modou",
+      role: "LABORANTIN",
+      telephone: "+221 77 100 00 07",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "secretaire@ucad.edu.sn",
+      motDePasse,
+      nom: "Mbaye",
+      prenom: "Ndeye",
+      role: "SECRETAIRE",
+      telephone: "+221 77 100 00 08",
+    },
+  });
+
   console.log("🧑‍🎓 Création des patients…");
   const patientsData = [
     {
@@ -338,9 +382,14 @@ async function main() {
   });
 
   console.log("✅ Données de démonstration créées avec succès.");
-  console.log("   Personnel   : admin@ucad.edu.sn / passer123");
-  console.log("   Personnel   : medecin@ucad.edu.sn / passer123");
-  console.log("   Étudiant    : aissatou.faye@ucad.edu.sn / passer123");
+  console.log("   Administrateur : admin@ucad.edu.sn / passer123");
+  console.log("   Direction      : direction@ucad.edu.sn / passer123");
+  console.log("   Médecin        : medecin@ucad.edu.sn / passer123");
+  console.log("   Infirmier      : infirmier@ucad.edu.sn / passer123");
+  console.log("   Laborantin     : laborantin@ucad.edu.sn / passer123");
+  console.log("   Pharmacien     : pharmacie@ucad.edu.sn / passer123");
+  console.log("   Secrétaire     : secretaire@ucad.edu.sn / passer123");
+  console.log("   Étudiant       : aissatou.faye@ucad.edu.sn / passer123");
   void admin;
 }
 

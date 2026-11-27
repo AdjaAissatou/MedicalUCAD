@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
-import { peutAccederModule } from "@/lib/authz";
+import { peutAccederModule, accueilParRole } from "@/lib/authz";
 
 // Garde d'accès au module « Rendez-vous ».
 export default async function RendezVousLayout({
@@ -10,6 +10,6 @@ export default async function RendezVousLayout({
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!peutAccederModule(user, "rendez-vous")) redirect("/tableau-de-bord");
+  if (!peutAccederModule(user, "rendez-vous")) redirect(accueilParRole(user));
   return <>{children}</>;
 }

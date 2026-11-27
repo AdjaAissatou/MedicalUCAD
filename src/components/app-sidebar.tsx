@@ -11,6 +11,7 @@ import {
   Share2,
   Pill,
   ShieldCheck,
+  BarChart3,
   X,
 } from "lucide-react";
 import { UcadLogoMark } from "@/components/brand/ucad-logo";
@@ -18,6 +19,7 @@ import { peutAccederModule } from "@/lib/authz";
 
 const NAV = [
   { href: "/tableau-de-bord", cle: "tableau-de-bord", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/supervision", cle: "supervision", label: "Supervision", icon: BarChart3 },
   { href: "/patients", cle: "patients", label: "Dossiers médicaux", icon: Users },
   { href: "/rendez-vous", cle: "rendez-vous", label: "Rendez-vous", icon: CalendarDays },
   { href: "/consultations", cle: "consultations", label: "Consultations", icon: Stethoscope },

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSessionUser } from "@/lib/session";
+import { accueilParRole } from "@/lib/authz";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UcadLogoMark } from "@/components/brand/ucad-logo";
@@ -44,7 +45,7 @@ const MODULES = [
 export default async function Home() {
   const user = await getSessionUser();
   if (user) {
-    redirect(user.role === "ETUDIANT" ? "/espace-etudiant" : "/tableau-de-bord");
+    redirect(accueilParRole(user));
   }
 
   return (

@@ -54,18 +54,6 @@ export default async function AdministrationPage() {
       href: "/administration/utilisateurs",
       icon: UserCog,
     },
-    {
-      titre: "Pharmacie & stock",
-      desc: "Gérer le catalogue de médicaments, les seuils et les entrées de stock.",
-      href: "/pharmacie",
-      icon: Pill,
-    },
-    {
-      titre: "Dossiers patients",
-      desc: "Accéder et modifier l'ensemble des dossiers médicaux.",
-      href: "/patients",
-      icon: Users,
-    },
   ];
 
   return (
@@ -84,19 +72,17 @@ export default async function AdministrationPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {stats.map((s, i) => (
           <Reveal key={s.label} index={i}>
-            <Link href={s.href}>
-              <Card className="card-hover">
-                <CardContent className="p-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <s.icon className="h-5 w-5" />
-                  </div>
-                  <p className="mt-3 text-2xl font-bold text-foreground">
-                    <AnimatedNumber value={s.value} />
-                  </p>
-                  <p className="text-sm text-muted-foreground">{s.label}</p>
-                </CardContent>
-              </Card>
-            </Link>
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <p className="mt-3 text-2xl font-bold text-foreground">
+                  <AnimatedNumber value={s.value} />
+                </p>
+                <p className="text-sm text-muted-foreground">{s.label}</p>
+              </CardContent>
+            </Card>
           </Reveal>
         ))}
       </div>

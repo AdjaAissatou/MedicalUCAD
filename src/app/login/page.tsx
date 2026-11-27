@@ -116,6 +116,7 @@ export default async function LoginPage() {
               Comptes de démonstration
             </p>
             <p>Administrateur — admin@ucad.edu.sn / passer123</p>
+            <p>Direction — direction@ucad.edu.sn / passer123</p>
             <p>Médecin — medecin@ucad.edu.sn / passer123</p>
             <p>Étudiant — aissatou.faye@ucad.edu.sn / passer123</p>
           </div>

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
-import { peutAccederModule } from "@/lib/authz";
+import { peutAccederModule, accueilParRole } from "@/lib/authz";
 
 // Garde d'accès au module « Consultations » (personnel soignant).
 export default async function ConsultationsLayout({
@@ -10,6 +10,6 @@ export default async function ConsultationsLayout({
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!peutAccederModule(user, "consultations")) redirect("/tableau-de-bord");
+  if (!peutAccederModule(user, "consultations")) redirect(accueilParRole(user));
   return <>{children}</>;
 }

@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createSession, destroySession } from "@/lib/session";
+import { accueilParRole } from "@/lib/authz";
 import { limiterDebit, reinitialiserLimite } from "@/lib/rate-limit";
 
 export type LoginState = { error?: string };
@@ -57,7 +58,7 @@ export async function loginAction(
 
   reinitialiserLimite(cle);
   await createSession(user.id);
-  redirect(user.role === "ETUDIANT" ? "/espace-etudiant" : "/tableau-de-bord");
+  redirect(accueilParRole(user));
 }
 
 export async function logoutAction() {

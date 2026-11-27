@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
+import { peutAccederModule } from "@/lib/authz";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
@@ -32,43 +33,40 @@ export default async function TableauDeBord() {
   const user = await getSessionUser();
   const { debut, fin } = debutFinJour();
 
-  const [
-    nbPatients,
-    nbRdvJour,
-    nbConsultationsMois,
-    rdvJour,
-    stockFaible,
-  ] = await Promise.all([
-    prisma.patient.count(),
-    prisma.rendezVous.count({
-      where: { dateHeure: { gte: debut, lt: fin } },
-    }),
-    prisma.consultation.count({
-      where: {
-        date: {
-          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  const [nbPatients, nbRdvJour, nbConsultationsMois, rdvJour, stockFaible] =
+    await Promise.all([
+      prisma.patient.count(),
+      prisma.rendezVous.count({
+        where: { dateHeure: { gte: debut, lt: fin } },
+      }),
+      prisma.consultation.count({
+        where: {
+          date: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          },
         },
-      },
-    }),
-    prisma.rendezVous.findMany({
-      where: { dateHeure: { gte: debut, lt: fin } },
-      include: { patient: true, medecin: true },
-      orderBy: { dateHeure: "asc" },
-      take: 8,
-    }),
-    prisma.medicament.findMany({
-      where: { stock: { lte: prisma.medicament.fields.seuilAlerte } },
-      take: 5,
-      orderBy: { stock: "asc" },
-    }),
-  ]);
+      }),
+      prisma.rendezVous.findMany({
+        where: { dateHeure: { gte: debut, lt: fin } },
+        include: { patient: true, medecin: true },
+        orderBy: { dateHeure: "asc" },
+        take: 8,
+      }),
+      prisma.medicament.findMany({
+        where: { stock: { lte: prisma.medicament.fields.seuilAlerte } },
+        take: 5,
+        orderBy: { stock: "asc" },
+      }),
+    ]);
 
-  const stats = [
+  // Cartes filtrées selon les modules accessibles au rôle.
+  const toutesStats = [
     {
       label: "Patients enregistrés",
       value: nbPatients,
       icon: Users,
       href: "/patients",
+      cle: "patients" as const,
       color: "text-primary bg-primary/10",
       accent: "from-[#2dd4bf] to-[#087f72]",
     },
@@ -77,6 +75,7 @@ export default async function TableauDeBord() {
       value: nbRdvJour,
       icon: CalendarCheck,
       href: "/rendez-vous",
+      cle: "rendez-vous" as const,
       color: "text-gold bg-gold/15",
       accent: "from-[#e7c377] to-[#cf9f52]",
     },
@@ -85,6 +84,7 @@ export default async function TableauDeBord() {
       value: nbConsultationsMois,
       icon: Stethoscope,
       href: "/consultations",
+      cle: "consultations" as const,
       color: "text-emerald bg-mint",
       accent: "from-[#12907f] to-[#123b35]",
     },
@@ -93,10 +93,14 @@ export default async function TableauDeBord() {
       value: stockFaible.length,
       icon: Pill,
       href: "/pharmacie",
+      cle: "pharmacie" as const,
       color: "text-amber-600 bg-amber-500/15",
       accent: "from-[#f0b65a] to-[#e2922f]",
     },
   ];
+  const stats = toutesStats.filter((s) => peutAccederModule(user, s.cle));
+  const voitRdv = peutAccederModule(user, "rendez-vous");
+  const voitPharma = peutAccederModule(user, "pharmacie");
 
   return (
     <div>
@@ -125,129 +129,143 @@ export default async function TableauDeBord() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((s, i) => (
-          <Reveal key={s.label} index={i}>
-            <Link href={s.href}>
-              <Card className="card-hover group relative overflow-hidden">
-                <div
-                  className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${s.accent}`}
-                />
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`flex h-11 w-11 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${s.color}`}
-                    >
-                      <s.icon className="h-5 w-5" />
+      {stats.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map((s, i) => (
+            <Reveal key={s.label} index={i}>
+              <Link href={s.href}>
+                <Card className="card-hover group relative overflow-hidden">
+                  <div
+                    className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${s.accent}`}
+                  />
+                  <CardContent className="p-5">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`flex h-11 w-11 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${s.color}`}
+                      >
+                        <s.icon className="h-5 w-5" />
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                  </div>
-                  <p className="mt-4 text-3xl font-bold text-foreground">
-                    <AnimatedNumber value={s.value} />
-                  </p>
-                  <p className="text-sm text-muted-foreground">{s.label}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          </Reveal>
-        ))}
-      </div>
+                    <p className="mt-4 text-3xl font-bold text-foreground">
+                      <AnimatedNumber value={s.value} />
+                    </p>
+                    <p className="text-sm text-muted-foreground">{s.label}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      )}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        {/* Rendez-vous du jour */}
-        <Card className="lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-border p-5">
-            <div className="flex items-center gap-2">
-              <CalendarClock className="h-5 w-5 text-primary" />
-              <h2 className="font-semibold text-foreground">
-                Rendez-vous du jour
-              </h2>
-            </div>
-            <Link
-              href="/rendez-vous"
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Tout voir
-            </Link>
-          </div>
-          <CardContent className="p-2">
-            {rdvJour.length === 0 ? (
-              <EmptyState
-                icon={CalendarClock}
-                title="Aucun rendez-vous aujourd'hui"
-                description="Les rendez-vous planifiés pour aujourd'hui apparaîtront ici."
-              />
-            ) : (
-              <ul className="divide-y divide-border">
-                {rdvJour.map((rdv) => (
-                  <li
-                    key={rdv.id}
-                    className="flex items-center gap-4 px-3 py-3"
-                  >
-                    <div className="flex w-14 shrink-0 flex-col items-center">
-                      <span className="text-sm font-semibold text-primary">
-                        {formatHeure(rdv.dateHeure)}
-                      </span>
-                    </div>
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground text-xs font-semibold">
-                      {initiales(rdv.patient.prenom, rdv.patient.nom)}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">
-                        {rdv.patient.prenom} {rdv.patient.nom}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {rdv.motif ?? "Consultation"} · Dr {rdv.medecin.nom}
-                      </p>
-                    </div>
-                    <Badge variant={STATUT_RDV_VARIANTS[rdv.statut]}>
-                      {STATUT_RDV_LABELS[rdv.statut] ?? rdv.statut}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+      {voitRdv || voitPharma ? (
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+          {voitRdv && (
+            <Card className="lg:col-span-2">
+              <div className="flex items-center justify-between border-b border-border p-5">
+                <div className="flex items-center gap-2">
+                  <CalendarClock className="h-5 w-5 text-primary" />
+                  <h2 className="font-semibold text-foreground">
+                    Rendez-vous du jour
+                  </h2>
+                </div>
+                <Link
+                  href="/rendez-vous"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Tout voir
+                </Link>
+              </div>
+              <CardContent className="p-2">
+                {rdvJour.length === 0 ? (
+                  <EmptyState
+                    icon={CalendarClock}
+                    title="Aucun rendez-vous aujourd'hui"
+                    description="Les rendez-vous planifiés pour aujourd'hui apparaîtront ici."
+                  />
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {rdvJour.map((rdv) => (
+                      <li
+                        key={rdv.id}
+                        className="flex items-center gap-4 px-3 py-3"
+                      >
+                        <div className="flex w-14 shrink-0 flex-col items-center">
+                          <span className="text-sm font-semibold text-primary">
+                            {formatHeure(rdv.dateHeure)}
+                          </span>
+                        </div>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground text-xs font-semibold">
+                          {initiales(rdv.patient.prenom, rdv.patient.nom)}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-foreground">
+                            {rdv.patient.prenom} {rdv.patient.nom}
+                          </p>
+                          <p className="truncate text-xs text-muted-foreground">
+                            {rdv.motif ?? "Consultation"} · Dr {rdv.medecin.nom}
+                          </p>
+                        </div>
+                        <Badge variant={STATUT_RDV_VARIANTS[rdv.statut]}>
+                          {STATUT_RDV_LABELS[rdv.statut] ?? rdv.statut}
+                        </Badge>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Alertes stock pharmacie */}
-        <Card>
-          <div className="flex items-center gap-2 border-b border-border p-5">
-            <TriangleAlert className="h-5 w-5 text-amber-600" />
-            <h2 className="font-semibold text-foreground">Alertes pharmacie</h2>
-          </div>
-          <CardContent className="p-2">
-            {stockFaible.length === 0 ? (
-              <EmptyState
-                icon={Pill}
-                title="Stock sous contrôle"
-                description="Aucun médicament sous le seuil d'alerte."
-              />
-            ) : (
-              <ul className="divide-y divide-border">
-                {stockFaible.map((m) => (
-                  <li
-                    key={m.id}
-                    className="flex items-center justify-between px-3 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">
-                        {m.nom}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {m.dosage ?? m.forme ?? "—"}
-                      </p>
-                    </div>
-                    <Badge variant={m.stock === 0 ? "destructive" : "warning"}>
-                      {m.stock} restant{m.stock > 1 ? "s" : ""}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          {voitPharma && (
+            <Card className={voitRdv ? "" : "lg:col-span-3"}>
+              <div className="flex items-center gap-2 border-b border-border p-5">
+                <TriangleAlert className="h-5 w-5 text-amber-600" />
+                <h2 className="font-semibold text-foreground">
+                  Alertes pharmacie
+                </h2>
+              </div>
+              <CardContent className="p-2">
+                {stockFaible.length === 0 ? (
+                  <EmptyState
+                    icon={Pill}
+                    title="Stock sous contrôle"
+                    description="Aucun médicament sous le seuil d'alerte."
+                  />
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {stockFaible.map((m) => (
+                      <li
+                        key={m.id}
+                        className="flex items-center justify-between px-3 py-3"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-foreground">
+                            {m.nom}
+                          </p>
+                          <p className="truncate text-xs text-muted-foreground">
+                            {m.dosage ?? m.forme ?? "—"}
+                          </p>
+                        </div>
+                        <Badge variant={m.stock === 0 ? "destructive" : "warning"}>
+                          {m.stock} restant{m.stock > 1 ? "s" : ""}
+                        </Badge>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      ) : stats.length === 0 ? (
+        <EmptyState
+          icon={Stethoscope}
+          title="Bienvenue sur UCAD Medical"
+          description="Votre tableau de bord s'enrichira avec les modules liés à votre rôle."
+        />
+      ) : null}
     </div>
   );
 }
