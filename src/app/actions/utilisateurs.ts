@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { estAdmin } from "@/lib/authz";
 import { ROLES } from "@/lib/constants";
+import { journaliser } from "@/lib/audit";
 
 async function requireAdmin() {
   const user = await getSessionUser();
@@ -34,7 +35,7 @@ export async function creerUtilisateur(
   _prev: UtilisateurFormState,
   formData: FormData
 ): Promise<UtilisateurFormState> {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const parsed = baseSchema
     .extend({
@@ -78,6 +79,12 @@ export async function creerUtilisateur(
     return { error: "Une erreur est survenue lors de la création." };
   }
 
+  await journaliser({
+    user: admin,
+    action: "utilisateur.create",
+    cible: d.email,
+    details: d.role,
+  });
   revalidatePath("/administration/utilisateurs");
   redirect("/administration/utilisateurs");
 }
@@ -87,7 +94,7 @@ export async function modifierUtilisateur(
   _prev: UtilisateurFormState,
   formData: FormData
 ): Promise<UtilisateurFormState> {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const motDePasseSaisi = String(formData.get("motDePasse") ?? "");
   const schema = motDePasseSaisi
@@ -137,6 +144,7 @@ export async function modifierUtilisateur(
     return { error: "Une erreur est survenue lors de la mise à jour." };
   }
 
+  await journaliser({ user: admin, action: "utilisateur.update", cible: id });
   revalidatePath("/administration/utilisateurs");
   redirect("/administration/utilisateurs");
 }
@@ -152,6 +160,12 @@ export async function basculerActivation(id: string) {
     where: { id },
     data: { actif: !user.actif },
   });
+  await journaliser({
+    user: admin,
+    action: "utilisateur.activation",
+    cible: id,
+    details: user.actif ? "désactivé" : "activé",
+  });
   revalidatePath("/administration/utilisateurs");
 }
 
@@ -161,6 +175,7 @@ export async function supprimerUtilisateur(id: string) {
     throw new Error("Vous ne pouvez pas supprimer votre propre compte.");
   }
   await prisma.user.delete({ where: { id } });
+  await journaliser({ user: admin, action: "utilisateur.delete", cible: id });
   revalidatePath("/administration/utilisateurs");
   redirect("/administration/utilisateurs");
 }

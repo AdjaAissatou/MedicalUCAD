@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { TYPES_PATIENT } from "@/lib/constants";
 import { gereDossiers, peutSupprimerDossier } from "@/lib/authz";
+import { journaliser } from "@/lib/audit";
 
 const patientSchema = z.object({
   matricule: z.string().trim().min(1, "Le matricule est obligatoire."),
@@ -124,6 +125,12 @@ export async function creerPatient(
     return { error: "Une erreur est survenue lors de l'enregistrement." };
   }
 
+  await journaliser({
+    user,
+    action: "patient.create",
+    cible: `patient#${patientId}`,
+    details: `${d.prenom} ${d.nom}`,
+  });
   revalidatePath("/patients");
   redirect(`/patients/${patientId}`);
 }
@@ -200,6 +207,7 @@ export async function modifierPatient(
     return { error: "Une erreur est survenue lors de la mise à jour." };
   }
 
+  await journaliser({ user, action: "patient.update", cible: `patient#${id}` });
   revalidatePath(`/patients/${id}`);
   revalidatePath("/patients");
   redirect(`/patients/${id}`);
@@ -212,6 +220,7 @@ export async function supprimerPatient(id: string) {
     throw new Error("Action non autorisée.");
   }
   await prisma.patient.delete({ where: { id } });
+  await journaliser({ user, action: "patient.delete", cible: `patient#${id}` });
   revalidatePath("/patients");
   redirect("/patients");
 }

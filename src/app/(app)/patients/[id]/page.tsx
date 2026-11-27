@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
+import { journaliser } from "@/lib/audit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +75,15 @@ export default async function PatientDetail({
   });
 
   if (!patient) notFound();
+
+  // Traçabilité : accès en lecture au dossier médical.
+  const user = await getSessionUser();
+  await journaliser({
+    user,
+    action: "dossier.view",
+    cible: `patient#${patient.id}`,
+    details: `${patient.prenom} ${patient.nom}`,
+  });
 
   const d = patient.dossier;
 

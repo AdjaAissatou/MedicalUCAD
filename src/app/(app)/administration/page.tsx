@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Settings,
   ShieldCheck,
+  ScrollText,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +54,12 @@ export default async function AdministrationPage() {
       desc: "Créer, modifier, activer ou désactiver les comptes du personnel.",
       href: "/administration/utilisateurs",
       icon: UserCog,
+    },
+    {
+      titre: "Journal d'audit",
+      desc: "Consulter la traçabilité des accès et des modifications.",
+      href: "/administration/journal",
+      icon: ScrollText,
     },
   ];
 

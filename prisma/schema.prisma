@@ -206,3 +206,21 @@ model LigneOrdonnance {
   quantite     Int         @default(1)
   delivre      Boolean     @default(false)
 }
+
+// ─────────────────────────────────────────────────────────────
+// Journal d'audit — traçabilité des accès et des modifications
+// ─────────────────────────────────────────────────────────────
+model JournalAudit {
+  id        String   @id @default(cuid())
+  userId    String? // auteur de l'action (null si système)
+  userEmail String?
+  userRole  String?
+  action    String // ex: patient.create, consultation.update, dossier.view
+  cible     String? // entité concernée (type#id ou libellé)
+  details   String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+}

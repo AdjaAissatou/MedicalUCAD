@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { estSoignant } from "@/lib/authz";
+import { journaliser } from "@/lib/audit";
 
 const BORNES = {
   poids: {
@@ -162,6 +163,11 @@ export async function creerConsultation(
     return { error: "Une erreur est survenue lors de l'enregistrement." };
   }
 
+  await journaliser({
+    user,
+    action: "consultation.create",
+    cible: `patient#${patientId}`,
+  });
   revalidatePath("/consultations");
   revalidatePath(`/patients/${patientId}`);
   redirect(`/patients/${patientId}`);
@@ -201,6 +207,11 @@ export async function modifierConsultation(
     return { error: "Une erreur est survenue lors de la mise à jour." };
   }
 
+  await journaliser({
+    user,
+    action: "consultation.update",
+    cible: `consultation#${id}`,
+  });
   revalidatePath("/consultations");
   revalidatePath(`/patients/${patientId}`);
   redirect(`/patients/${patientId}`);
