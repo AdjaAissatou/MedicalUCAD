@@ -93,7 +93,7 @@ export default async function Home() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-6 pb-20 pt-32 lg:grid-cols-[1.05fr_0.95fr] lg:pb-28 lg:pt-36">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-              Premium Institutional Healthcare
+              Santé · Innovation · Excellence
             </p>
             <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
               La santé universitaire,

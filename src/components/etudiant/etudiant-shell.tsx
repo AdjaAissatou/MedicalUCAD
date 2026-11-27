@@ -38,7 +38,7 @@ export function EtudiantShell({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen app-canvas">
       {/* En-tête */}
       <header className="sticky top-0 z-20 border-b border-border bg-card/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-3 px-4">

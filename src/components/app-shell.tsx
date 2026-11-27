@@ -20,7 +20,7 @@ export function AppShell({
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen app-canvas">
       <AppSidebar
         open={open}
         onClose={() => setOpen(false)}
