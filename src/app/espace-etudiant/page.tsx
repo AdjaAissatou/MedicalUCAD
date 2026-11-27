@@ -46,7 +46,7 @@ export default async function AccueilEtudiant() {
     <div className="space-y-6">
       {/* En-tête */}
       <Reveal>
-        <div className="relative overflow-hidden rounded-2xl bg-[#062e2c] p-6 text-white">
+        <div className="relative overflow-hidden rounded-2xl bg-[#123b35] p-6 text-white">
           <div className="aurora opacity-70" aria-hidden>
             <span /><span /><span />
           </div>

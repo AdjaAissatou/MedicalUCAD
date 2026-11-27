@@ -6,7 +6,7 @@ import { Slot } from "@/components/ui/slot";
 const buttonVariants = cva(
   // Anneau de focus visible (WCAG 2.4.7) : on remplace l'outline système par un
   // ring cohérent avec les champs de saisie. Transitions élargies aux ombres.
-  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,background-color,box-shadow,transform] duration-150 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 cursor-pointer select-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,box-shadow,transform] duration-150 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 cursor-pointer select-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -14,6 +14,8 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm hover:shadow-md hover:shadow-primary/25 active:scale-[0.98]",
         accent:
           "bg-accent text-accent-foreground hover:bg-accent-hover shadow-sm hover:shadow-md hover:shadow-accent/30 active:scale-[0.98]",
+        premium:
+          "bg-gold text-gold-foreground font-semibold hover:brightness-[1.06] shadow-sm hover:shadow-md hover:shadow-gold/35 active:scale-[0.98]",
         outline:
           "border border-border bg-card text-foreground hover:bg-muted hover:border-primary/40 active:scale-[0.98]",
         ghost: "text-foreground hover:bg-muted active:scale-[0.98]",

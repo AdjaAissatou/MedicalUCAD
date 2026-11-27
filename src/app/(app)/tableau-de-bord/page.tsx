@@ -101,7 +101,7 @@ export default async function TableauDeBord() {
   return (
     <div>
       {/* En-tête premium */}
-      <div className="relative mb-6 overflow-hidden rounded-2xl bg-[#062e2c] p-6 sm:p-8 text-white rise">
+      <div className="relative mb-6 overflow-hidden rounded-2xl bg-[#123b35] p-6 sm:p-8 text-white rise">
         <div className="aurora opacity-70" aria-hidden>
           <span />
           <span />

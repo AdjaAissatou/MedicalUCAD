@@ -10,7 +10,7 @@ export default async function LoginPage() {
   return (
     <main className="relative min-h-screen grid lg:grid-cols-2 overflow-hidden">
       {/* Volet illustration animé */}
-      <div className="relative hidden lg:flex flex-col justify-between bg-[#062e2c] p-12 text-white overflow-hidden">
+      <div className="relative hidden lg:flex flex-col justify-between bg-[#123b35] p-12 text-white overflow-hidden">
         <div className="aurora" aria-hidden>
           <span />
           <span />
@@ -32,7 +32,7 @@ export default async function LoginPage() {
             <HeartPulse className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-lg font-semibold leading-tight">UCAD Santé</p>
+            <p className="text-lg font-semibold leading-tight">UCAD Medical</p>
             <p className="text-sm text-white/60">Services Médicaux</p>
           </div>
         </div>
@@ -89,7 +89,7 @@ export default async function LoginPage() {
             </div>
             <div>
               <p className="text-lg font-semibold leading-tight text-foreground">
-                UCAD Santé
+                UCAD Medical
               </p>
               <p className="text-sm text-muted-foreground">Services Médicaux</p>
             </div>

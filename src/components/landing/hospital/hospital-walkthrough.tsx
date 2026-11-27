@@ -31,7 +31,7 @@ const SALLES: Salle[] = [
   {
     top: "10vh",
     eyebrow: "Bienvenue",
-    titre: "Entrez dans UCAD Santé",
+    titre: "Entrez dans UCAD Medical",
     desc: "Visitez la plateforme comme si vous parcouriez l'hôpital. Faites défiler pour avancer.",
     align: "center",
   },

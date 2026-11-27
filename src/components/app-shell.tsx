@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { AppSidebar } from "./app-sidebar";
 import { UserMenu } from "./user-menu";
+import { ThemeToggle } from "./theme-toggle";
 import { Menu } from "lucide-react";
 import { estAdmin } from "@/lib/authz";
 import type { SessionUser } from "@/lib/session";
@@ -36,6 +37,7 @@ export function AppShell({
             <Menu className="h-6 w-6" />
           </button>
           <div className="flex-1" />
+          <ThemeToggle />
           <UserMenu user={user} />
         </header>
 

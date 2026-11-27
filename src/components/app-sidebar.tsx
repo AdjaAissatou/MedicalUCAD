@@ -56,24 +56,24 @@ export function AppSidebar({
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 border-r border-border bg-card flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-0",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-sidebar text-sidebar-foreground flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center justify-between gap-2 border-b border-border px-5">
+        <div className="flex h-16 items-center justify-between gap-2 border-b border-white/10 px-5">
           <Link href="/tableau-de-bord" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-gold ring-1 ring-gold/25">
               <HeartPulse className="h-5 w-5" />
             </div>
             <div className="leading-tight">
-              <p className="text-sm font-bold text-foreground">UCAD Santé</p>
-              <p className="text-[11px] text-muted-foreground">
-                Services Médicaux
+              <p className="text-sm font-bold text-white">UCAD Medical</p>
+              <p className="text-[11px] text-sidebar-foreground/60">
+                Espace de gestion médicale
               </p>
             </div>
           </Link>
           <button
-            className="lg:hidden text-muted-foreground hover:text-foreground cursor-pointer"
+            className="lg:hidden text-sidebar-foreground/70 hover:text-white cursor-pointer"
             onClick={onClose}
             aria-label="Fermer le menu"
           >
@@ -93,8 +93,8 @@ export function AppSidebar({
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-emerald text-white shadow-sm"
+                    : "text-sidebar-foreground/75 hover:bg-white/10 hover:text-white"
                 )}
                 aria-current={active ? "page" : undefined}
               >
@@ -105,8 +105,8 @@ export function AppSidebar({
           })}
         </nav>
 
-        <div className="border-t border-border p-4">
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
+        <div className="border-t border-white/10 p-4">
+          <p className="text-[11px] text-sidebar-foreground/55 leading-relaxed">
             Université Cheikh Anta Diop
             <br />
             de Dakar — Sénégal

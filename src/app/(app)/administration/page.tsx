@@ -72,7 +72,7 @@ export default async function AdministrationPage() {
     <div>
       <PageHeader
         title="Administration"
-        description="Pilotez l'ensemble de la plateforme UCAD Santé."
+        description="Pilotez l'ensemble de la plateforme UCAD Medical."
       >
         <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary">
           <ShieldCheck className="h-4 w-4" />

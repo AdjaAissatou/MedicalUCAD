@@ -1,23 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree } from "next/font/google";
+import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 import { PwaRegister } from "@/components/pwa-register";
 
-const figtree = Figtree({
-  variable: "--font-figtree",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "UCAD Santé — Services Médicaux",
+  title: "UCAD Medical — La santé universitaire, connectée",
   description:
-    "Plateforme de gestion des services médicaux de l'Université Cheikh Anta Diop de Dakar : dossiers médicaux, rendez-vous, consultations, orientations et pharmacie.",
+    "UCAD Medical : plateforme de gestion des services médicaux de l'Université Cheikh Anta Diop de Dakar — dossiers médicaux, rendez-vous, consultations, orientations et pharmacie.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "UCAD Santé",
+    title: "UCAD Medical",
   },
   icons: {
     icon: "/icon-192.png",
@@ -26,11 +32,17 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0891b2",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#123b35" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1512" },
+  ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
 };
+
+// Applique le thème mémorisé avant le premier rendu (évite le flash).
+const themeInit = `(function(){try{var t=localStorage.getItem('ucad-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -38,8 +50,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${figtree.variable} h-full antialiased`}>
+    <html
+      lang="fr"
+      suppressHydrationWarning
+      className={`${manrope.variable} ${inter.variable} h-full antialiased`}
+    >
       <body className="min-h-full">
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         {children}
         <PwaRegister />
       </body>

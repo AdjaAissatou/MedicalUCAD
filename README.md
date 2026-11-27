@@ -1,10 +1,12 @@
 <div align="center">
 
-# 🩺 UCAD Santé
+# 🩺 UCAD Medical
 
-### Plateforme de gestion des services médicaux de l'Université Cheikh Anta Diop de Dakar
+### La santé universitaire, connectée et accessible
 
-Dossiers médicaux · Rendez-vous · Consultations · Orientations · Pharmacie · Espace étudiant mobile
+Plateforme de gestion des services médicaux de l'Université Cheikh Anta Diop de Dakar
+
+*Direction artistique « Premium Institutional Healthcare » · vert profond + or · clair & sombre*
 
 <br />
 
@@ -25,7 +27,7 @@ Dossiers médicaux · Rendez-vous · Consultations · Orientations · Pharmacie 
 
 ## 📖 Présentation
 
-**UCAD Santé** est une application web **full-stack** qui numérise l'ensemble du parcours de soin
+**UCAD Medical** est une application web **full-stack** qui numérise l'ensemble du parcours de soin
 du service médical universitaire. Elle réunit deux interfaces dans une seule base de code :
 
 - un **espace personnel** pour les soignants et l'administration (dossiers, rendez-vous, consultations, pharmacie) ;
@@ -65,6 +67,14 @@ du service médical universitaire. Elle réunit deux interfaces dans une seule b
 <img src="docs/screenshots/11-etudiant-dossier.png" alt="Dossier médical" width="30%" />
 </div>
 
+### 🌙 Mode sombre
+
+L'interface propose un **thème clair et un thème sombre**, avec mémorisation du choix de l'utilisateur.
+
+| Tableau de bord (sombre) | Pharmacie (sombre) | Étudiant (sombre) |
+|:---:|:---:|:---:|
+| ![Tableau de bord sombre](docs/screenshots/03b-tableau-de-bord-sombre.png) | ![Pharmacie sombre](docs/screenshots/07b-pharmacie-sombre.png) | <img src="docs/screenshots/09b-etudiant-sombre.png" width="220" /> |
+
 ---
 
 ## 🧩 Fonctionnalités
@@ -94,8 +104,11 @@ du service médical universitaire. Elle réunit deux interfaces dans une seule b
 
 ## 🎨 Design & expérience
 
-- Design system médical : **teal médical** (`#0891B2`) + **vert santé** (`#16A34A`), pensé pour l'**accessibilité (WCAG)**.
-- Typographie **Figtree**, interface **100 % en français**.
+Direction artistique **« Premium Institutional Healthcare »** : une interface élégante, rassurante et professionnelle.
+
+- **Palette de marque** : **UCAD Forest** `#123B35` (institutionnel), **Medical Emerald** `#087F72` (actions) et **UCAD Gold** `#D5A84B` (signature premium, utilisé avec parcimonie) — pensée pour l'**accessibilité (WCAG)**.
+- **Thème clair & sombre** avec mémorisation de la préférence (tokens CSS, sans flash au chargement).
+- Typographie **Manrope** (titres) + **Inter** (contenus), interface **100 % en français**.
 - **Animations sur-mesure (CSS, sans dépendance)** : arrière-plans *aurora* animés, dégradés mouvants, compteurs animés, révélations au défilement, effets de survol — avec respect de `prefers-reduced-motion`.
 - Entièrement **responsive** ; l'espace étudiant est **mobile-first** façon application native.
 

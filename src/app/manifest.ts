@@ -2,15 +2,15 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "UCAD Santé — Services Médicaux",
-    short_name: "UCAD Santé",
+    name: "UCAD Medical — Services Médicaux",
+    short_name: "UCAD Medical",
     description:
       "Services médicaux de l'Université Cheikh Anta Diop de Dakar : rendez-vous, dossier médical, consultations.",
     start_url: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#062e2c",
-    theme_color: "#0891b2",
+    background_color: "#123b35",
+    theme_color: "#087f72",
     lang: "fr",
     categories: ["health", "medical", "education"],
     icons: [

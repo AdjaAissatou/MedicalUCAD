@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn, initiales } from "@/lib/utils";
 import { logoutAction } from "@/app/actions/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Home,
   CalendarDays,
@@ -47,7 +48,7 @@ export function EtudiantShell({
             </span>
             <span className="leading-tight">
               <span className="block text-sm font-bold text-foreground">
-                UCAD Santé
+                UCAD Medical
               </span>
               <span className="block text-[11px] text-muted-foreground">
                 Espace étudiant
@@ -78,6 +79,7 @@ export function EtudiantShell({
           </nav>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle className="h-8 w-8" />
             <span className="hidden sm:flex flex-col items-end leading-tight">
               <span className="text-sm font-medium text-foreground">
                 {user.prenom} {user.nom}

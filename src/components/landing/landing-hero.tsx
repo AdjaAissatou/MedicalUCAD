@@ -86,7 +86,7 @@ export function LandingHero() {
           <Button
             asChild
             size="lg"
-            className="bg-white text-[#062e2c] hover:bg-white/90"
+            className="bg-white text-[#123b35] hover:bg-white/90"
           >
             <Link href="/login">
               <LogIn className="h-4 w-4" />

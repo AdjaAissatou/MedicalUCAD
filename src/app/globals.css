@@ -1,47 +1,128 @@
 @import "tailwindcss";
 
 /* ───────────────────────────────────────────────────────────
-   UCAD Santé — Design System
-   Style : « Accessible & Ethical » (WCAG AAA)
-   Palette : teal médical + vert santé
-   Typographie : Figtree / Noto Sans
+   UCAD Medical — Design System 1.0
+   Direction : « Premium Institutional Healthcare »
+   Palette : UCAD Forest + Medical Emerald + UCAD Gold
+   Typographie : Manrope (titres) / Inter (contenus)
    ─────────────────────────────────────────────────────────── */
 
 :root {
-  --background: #f7fbfb;
-  --foreground: #0f2b2a;
+  color-scheme: light;
+
+  /* Marque */
+  --forest: #123b35; /* institutionnel : sidebar, surfaces profondes */
+  --forest-foreground: #e8f3ef;
+  --emerald: #087f72; /* actions & interactions */
+  --gold: #d5a84b; /* premium, signature — à garder rare */
+  --gold-foreground: #123b35;
+  --mint: #e8f3ef; /* surfaces secondaires */
+
+  --background: #f5f7f5;
+  --foreground: #1c302b;
 
   --card: #ffffff;
-  --card-foreground: #0f2b2a;
+  --card-foreground: #1c302b;
 
-  --primary: #0891b2; /* teal médical */
+  --primary: #087f72; /* Medical Emerald */
   --primary-foreground: #ffffff;
-  --primary-hover: #0e7490;
+  --primary-hover: #0b6b60;
 
-  --secondary: #ecfeff; /* cyan très clair */
-  --secondary-foreground: #134e4a;
+  --secondary: #e8f3ef; /* Soft Mint */
+  --secondary-foreground: #123b35;
 
-  --accent: #16a34a; /* vert santé (CTA) */
+  --accent: #087f72; /* CTA émeraude */
   --accent-foreground: #ffffff;
-  --accent-hover: #15803d;
+  --accent-hover: #0b6b60;
 
-  --muted: #eef4f5;
-  --muted-foreground: #55716f;
+  --muted: #eef3f0;
+  --muted-foreground: #718079;
 
-  --border: #d5e6e6;
-  --input: #d5e6e6;
-  --ring: #0891b2;
+  --border: #e5ebe7;
+  --input: #e5ebe7;
+  --ring: #087f72;
 
-  --destructive: #dc2626;
+  --sidebar: #123b35;
+  --sidebar-foreground: #e8f3ef;
+
+  --destructive: #dc4c4c;
   --destructive-foreground: #ffffff;
+  --warning: #e9a23b;
+  --warning-foreground: #3a2a0e;
+  --success: #16a36a;
+  --info: #4386c6;
 
-  --warning: #d97706;
-  --warning-foreground: #ffffff;
+  --radius: 0.625rem; /* boutons ~10px ; cartes (rounded-xl) ~14px */
+}
 
-  --success: #16a34a;
-  --info: #0891b2;
+/* Thème sombre : préférence système au premier contact… */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --forest: #0b1512;
+    --forest-foreground: #e8f3ef;
+    --emerald: #10a094;
+    --gold: #e0b85e;
+    --gold-foreground: #0b1512;
+    --mint: #22332d;
+    --background: #101b18;
+    --foreground: #f1f5f2;
+    --card: #192722;
+    --card-foreground: #f1f5f2;
+    --primary: #0d9488;
+    --primary-foreground: #ffffff;
+    --primary-hover: #14b3a5;
+    --secondary: #22332d;
+    --secondary-foreground: #d7e5de;
+    --accent: #0d9488;
+    --accent-foreground: #ffffff;
+    --accent-hover: #14b3a5;
+    --muted: #1c2b26;
+    --muted-foreground: #a1b2a9;
+    --border: #2a3b34;
+    --input: #2a3b34;
+    --ring: #14b3a5;
+    --sidebar: #0b1512;
+    --sidebar-foreground: #e8f3ef;
+    --destructive: #e76a6a;
+    --warning: #e9a23b;
+    --success: #2cbf86;
+    --info: #5b9ad6;
+  }
+}
 
-  --radius: 0.625rem;
+/* …puis choix explicite de l'utilisateur (mémorisé), qui a priorité. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --forest: #0b1512;
+  --forest-foreground: #e8f3ef;
+  --emerald: #10a094;
+  --gold: #e0b85e;
+  --gold-foreground: #0b1512;
+  --mint: #22332d;
+  --background: #101b18;
+  --foreground: #f1f5f2;
+  --card: #192722;
+  --card-foreground: #f1f5f2;
+  --primary: #0d9488;
+  --primary-foreground: #ffffff;
+  --primary-hover: #14b3a5;
+  --secondary: #22332d;
+  --secondary-foreground: #d7e5de;
+  --accent: #0d9488;
+  --accent-foreground: #ffffff;
+  --accent-hover: #14b3a5;
+  --muted: #1c2b26;
+  --muted-foreground: #a1b2a9;
+  --border: #2a3b34;
+  --input: #2a3b34;
+  --ring: #14b3a5;
+  --sidebar: #0b1512;
+  --sidebar-foreground: #e8f3ef;
+  --destructive: #e76a6a;
+  --warning: #e9a23b;
+  --success: #2cbf86;
+  --info: #5b9ad6;
 }
 
 @theme inline {
@@ -69,12 +150,33 @@
   --color-success: var(--success);
   --color-info: var(--info);
 
-  --font-sans: var(--font-figtree), system-ui, sans-serif;
+  /* Marque UCAD Medical */
+  --color-forest: var(--forest);
+  --color-forest-foreground: var(--forest-foreground);
+  --color-emerald: var(--emerald);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-mint: var(--mint);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Titres en Manrope (display), contenus en Inter */
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
 }
 
 * {
@@ -109,12 +211,12 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c3d9d9;
+  background: #c6d6ce;
   border-radius: 9999px;
   border: 2px solid var(--background);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a7c6c6;
+  background: #a9c0b6;
 }
 
 /* ───────────────────────────────────────────────────────────
@@ -189,8 +291,8 @@ body {
 .card-hover:hover {
   transform: translateY(-3px);
   box-shadow:
-    0 12px 24px -12px rgba(8, 145, 178, 0.25),
-    0 4px 8px -4px rgba(15, 43, 42, 0.08);
+    0 12px 24px -12px rgba(8, 127, 114, 0.28),
+    0 4px 8px -4px rgba(18, 59, 53, 0.1);
 }
 
 /* Barre de progression animée (jauges de stock) */
@@ -263,14 +365,14 @@ body {
   height: 42vw;
   top: -6%;
   left: -4%;
-  background: radial-gradient(circle at 30% 30%, #22d3ee, transparent 60%);
+  background: radial-gradient(circle at 30% 30%, #22d3b4, transparent 60%);
 }
 .aurora span:nth-child(2) {
   width: 38vw;
   height: 38vw;
   bottom: -10%;
   right: -6%;
-  background: radial-gradient(circle at 60% 40%, #16a34a, transparent 60%);
+  background: radial-gradient(circle at 60% 40%, #0b6b60, transparent 60%);
   animation-delay: -6s;
   animation-duration: 22s;
 }
@@ -279,7 +381,7 @@ body {
   height: 30vw;
   top: 30%;
   left: 40%;
-  background: radial-gradient(circle at 50% 50%, #0891b2, transparent 62%);
+  background: radial-gradient(circle at 50% 50%, #d5a84b, transparent 62%);
   animation-delay: -12s;
   animation-duration: 26s;
 }
@@ -309,7 +411,7 @@ body {
   }
 }
 .text-gradient {
-  background: linear-gradient(100deg, #0e7490, #16a34a, #0891b2);
+  background: linear-gradient(100deg, #10a094, #2dd4bf, #d5a84b);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -327,7 +429,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(130deg, #22d3ee55, transparent 40%, #16a34a55);
+  background: linear-gradient(130deg, #22d3b455, transparent 40%, #d5a84b55);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -336,9 +438,9 @@ body {
   pointer-events: none;
 }
 
-/* Verre dépoli */
+/* Verre dépoli (adapté au thème) */
 .glass {
-  background: rgba(255, 255, 255, 0.72);
+  background: color-mix(in srgb, var(--card) 74%, transparent);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
@@ -424,7 +526,7 @@ body {
 
 /* Bande de séparation en dégradé (transitions de sections) */
 .section-fade-top {
-  background: linear-gradient(to bottom, #062e2c, transparent);
+  background: linear-gradient(to bottom, #123b35, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

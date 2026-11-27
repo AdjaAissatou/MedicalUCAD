@@ -61,7 +61,7 @@ export function EcgInterlude() {
   return (
     <section
       ref={section}
-      className="relative overflow-hidden bg-[#062e2c] py-24 text-white"
+      className="relative overflow-hidden bg-[#123b35] py-24 text-white"
     >
       <div className="mx-auto max-w-3xl px-6 text-center">
         <p className="text-sm font-semibold uppercase tracking-widest text-[#7fffd4]">

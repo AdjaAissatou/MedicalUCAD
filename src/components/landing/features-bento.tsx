@@ -13,7 +13,7 @@ import { ScrollReveal } from "@/components/landing/scroll-reveal";
 /*
  * Section « features » en bento — adaptée d'un composant 21st.dev
  * (« Feature Section with Bento Grid » par @tommyjepsen) à la charte
- * UCAD Santé : palette teal médicale, 6 modules réels, révélation au scroll.
+ * UCAD Medical : palette teal médicale, 6 modules réels, révélation au scroll.
  */
 
 type Module = {
