@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { TYPES_PATIENT } from "@/lib/constants";
+import { gereDossiers } from "@/lib/authz";
 
 const patientSchema = z.object({
   matricule: z.string().trim().min(1, "Le matricule est obligatoire."),
@@ -67,6 +68,12 @@ export async function creerPatient(
 ): Promise<PatientFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!gereDossiers(user)) {
+    return {
+      error:
+        "Action non autorisée : votre rôle ne permet pas de gérer les dossiers patients.",
+    };
+  }
 
   const parsed = parseForm(formData);
   if (!parsed.success) {
@@ -128,6 +135,12 @@ export async function modifierPatient(
 ): Promise<PatientFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!gereDossiers(user)) {
+    return {
+      error:
+        "Action non autorisée : votre rôle ne permet pas de gérer les dossiers patients.",
+    };
+  }
 
   const parsed = parseForm(formData);
   if (!parsed.success) {
