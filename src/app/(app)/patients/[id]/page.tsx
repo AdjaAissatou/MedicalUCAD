@@ -5,10 +5,10 @@ import { getSessionUser } from "@/lib/session";
 import { journaliser } from "@/lib/audit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import { AccesEtudiantCard } from "@/components/patients/acces-etudiant-card";
-import { initiales, age, formatDate, formatDateHeure } from "@/lib/utils";
+import { initiales, age, formatDateHeure } from "@/lib/utils";
 import {
   TYPE_PATIENT_LABELS,
   STATUT_RDV_LABELS,
@@ -27,6 +27,7 @@ import {
   CalendarDays,
   FileText,
   Share2,
+  History,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -69,7 +70,14 @@ export default async function PatientDetail({
       rendezVous: {
         include: { medecin: true },
         orderBy: { dateHeure: "desc" },
-        take: 10,
+      },
+      orientations: {
+        include: { medecin: true },
+        orderBy: { date: "desc" },
+      },
+      ordonnances: {
+        include: { lignes: true },
+        orderBy: { date: "desc" },
       },
     },
   });
@@ -86,6 +94,86 @@ export default async function PatientDetail({
   });
 
   const d = patient.dossier;
+
+  // Chronologie médicale unifiée : consultations, rendez-vous, orientations
+  // et ordonnances, fusionnés et triés du plus récent au plus ancien.
+  const LIBELLE_STATUT: Record<string, string> = {
+    EN_ATTENTE: "En attente",
+    REALISEE: "Réalisée",
+    ANNULEE: "Annulée",
+    DELIVREE: "Délivrée",
+    PARTIELLE: "Partielle",
+  };
+  const VARIANT_STATUT: Record<string, BadgeProps["variant"]> = {
+    EN_ATTENTE: "warning",
+    REALISEE: "success",
+    DELIVREE: "success",
+    PARTIELLE: "info",
+    ANNULEE: "neutral",
+  };
+  type EvtChrono = {
+    id: string;
+    date: Date;
+    type: "consultation" | "rendezvous" | "orientation" | "ordonnance";
+    titre: string;
+    detail?: string;
+    auteur?: string;
+    statut?: string;
+    statutVariant?: BadgeProps["variant"];
+  };
+  const chronologie: EvtChrono[] = [
+    ...patient.consultations.map((c) => ({
+      id: `c-${c.id}`,
+      date: c.date,
+      type: "consultation" as const,
+      titre: c.motif?.trim() ? c.motif : "Consultation",
+      detail: c.diagnostic?.trim() ? `Diagnostic : ${c.diagnostic}` : undefined,
+      auteur: `Dr ${c.medecin.prenom} ${c.medecin.nom}`,
+    })),
+    ...patient.rendezVous.map((r) => ({
+      id: `r-${r.id}`,
+      date: r.dateHeure,
+      type: "rendezvous" as const,
+      titre: r.motif?.trim() ? r.motif : "Rendez-vous",
+      auteur: `Dr ${r.medecin.prenom} ${r.medecin.nom}`,
+      statut: STATUT_RDV_LABELS[r.statut] ?? r.statut,
+      statutVariant: STATUT_RDV_VARIANTS[r.statut],
+    })),
+    ...patient.orientations.map((o) => ({
+      id: `o-${o.id}`,
+      date: o.date,
+      type: "orientation" as const,
+      titre: `Orientation — ${o.serviceCible}`,
+      detail: o.motif,
+      auteur: `Dr ${o.medecin.prenom} ${o.medecin.nom}`,
+      statut: LIBELLE_STATUT[o.statut] ?? o.statut,
+      statutVariant: VARIANT_STATUT[o.statut] ?? "neutral",
+    })),
+    ...patient.ordonnances.map((ord) => ({
+      id: `ord-${ord.id}`,
+      date: ord.date,
+      type: "ordonnance" as const,
+      titre: `Ordonnance (${ord.lignes.length} ligne${
+        ord.lignes.length > 1 ? "s" : ""
+      })`,
+      detail: ord.lignes.map((l) => l.designation).join(", ") || undefined,
+      statut: LIBELLE_STATUT[ord.statut] ?? ord.statut,
+      statutVariant: VARIANT_STATUT[ord.statut] ?? "neutral",
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const CHRONO_STYLE: Record<
+    EvtChrono["type"],
+    { icon: typeof Stethoscope; tint: string }
+  > = {
+    consultation: { icon: Stethoscope, tint: "bg-primary/10 text-primary" },
+    rendezvous: { icon: CalendarDays, tint: "bg-gold/15 text-gold" },
+    orientation: { icon: Share2, tint: "bg-mint text-emerald" },
+    ordonnance: {
+      icon: FileText,
+      tint: "bg-secondary text-secondary-foreground",
+    },
+  };
 
   return (
     <div className="max-w-5xl">
@@ -259,82 +347,64 @@ export default async function PatientDetail({
             </CardContent>
           </Card>
 
-          {/* Historique consultations */}
+          {/* Chronologie médicale unifiée */}
           <Card>
             <div className="flex items-center gap-2 border-b border-border p-5">
-              <Stethoscope className="h-5 w-5 text-primary" />
-              <CardTitle className="text-base">
-                Historique des consultations
-              </CardTitle>
+              <History className="h-5 w-5 text-primary" />
+              <CardTitle className="text-base">Chronologie médicale</CardTitle>
             </div>
-            <CardContent className="p-2">
-              {patient.consultations.length === 0 ? (
+            <CardContent className="p-0">
+              {chronologie.length === 0 ? (
                 <EmptyState
-                  icon={Stethoscope}
-                  title="Aucune consultation"
-                  description="L'historique des consultations apparaîtra ici."
+                  icon={History}
+                  title="Aucun évènement"
+                  description="Consultations, rendez-vous, orientations et ordonnances apparaîtront ici."
                 />
               ) : (
-                <ul className="divide-y divide-border">
-                  {patient.consultations.map((c) => (
-                    <li key={c.id} className="px-3 py-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-medium text-foreground">
-                          {c.motif ?? "Consultation"}
-                        </p>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDate(c.date)}
+                <ul className="p-5">
+                  {chronologie.map((e, i) => {
+                    const style = CHRONO_STYLE[e.type];
+                    const Icon = style.icon;
+                    return (
+                      <li
+                        key={e.id}
+                        className="relative flex gap-4 pb-6 last:pb-0"
+                      >
+                        {i < chronologie.length - 1 && (
+                          <span
+                            className="absolute left-[17px] top-10 h-[calc(100%-1.25rem)] w-px bg-border"
+                            aria-hidden
+                          />
+                        )}
+                        <span
+                          className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${style.tint}`}
+                        >
+                          <Icon className="h-4 w-4" />
                         </span>
-                      </div>
-                      {c.diagnostic && (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          <span className="font-medium">Diagnostic :</span>{" "}
-                          {c.diagnostic}
-                        </p>
-                      )}
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Dr {c.medecin.prenom} {c.medecin.nom}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Rendez-vous */}
-          <Card>
-            <div className="flex items-center gap-2 border-b border-border p-5">
-              <CalendarDays className="h-5 w-5 text-primary" />
-              <CardTitle className="text-base">Rendez-vous</CardTitle>
-            </div>
-            <CardContent className="p-2">
-              {patient.rendezVous.length === 0 ? (
-                <EmptyState
-                  icon={CalendarDays}
-                  title="Aucun rendez-vous"
-                  description="Planifiez un rendez-vous pour ce patient."
-                />
-              ) : (
-                <ul className="divide-y divide-border">
-                  {patient.rendezVous.map((rdv) => (
-                    <li
-                      key={rdv.id}
-                      className="flex items-center justify-between gap-2 px-3 py-3"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {formatDateHeure(rdv.dateHeure)}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {rdv.motif ?? "Consultation"} · Dr {rdv.medecin.nom}
-                        </p>
-                      </div>
-                      <Badge variant={STATUT_RDV_VARIANTS[rdv.statut]}>
-                        {STATUT_RDV_LABELS[rdv.statut] ?? rdv.statut}
-                      </Badge>
-                    </li>
-                  ))}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-sm font-medium text-foreground">
+                              {e.titre}
+                            </p>
+                            {e.statut && (
+                              <Badge variant={e.statutVariant}>
+                                {e.statut}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDateHeure(e.date)}
+                            {e.auteur ? ` · ${e.auteur}` : ""}
+                          </p>
+                          {e.detail && (
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              {e.detail}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </CardContent>
