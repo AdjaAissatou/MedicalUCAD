@@ -6,22 +6,68 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 
-const schema = z.object({
-  patientId: z.string().min(1, "Veuillez sélectionner un patient."),
-  medecinId: z.string().min(1, "Veuillez sélectionner un médecin."),
-  rendezVousId: z.string().optional(),
-  date: z.string().optional(),
-  motif: z.string().trim().optional(),
-  symptomes: z.string().trim().optional(),
-  diagnostic: z.string().trim().optional(),
-  traitement: z.string().trim().optional(),
-  observations: z.string().trim().optional(),
-  poids: z.string().optional(),
-  taille: z.string().optional(),
-  temperature: z.string().optional(),
-  tensionArt: z.string().trim().optional(),
-  pouls: z.string().optional(),
-});
+const BORNES = {
+  poids: {
+    min: 1,
+    max: 400,
+    message: "Le poids doit être un nombre entre 1 et 400 kg.",
+  },
+  taille: {
+    min: 20,
+    max: 260,
+    message: "La taille doit être un nombre entre 20 et 260 cm.",
+  },
+  temperature: {
+    min: 30,
+    max: 45,
+    message: "La température doit être un nombre entre 30 et 45 °C.",
+  },
+  pouls: {
+    min: 20,
+    max: 300,
+    message: "Le pouls doit être un nombre entre 20 et 300 bpm.",
+  },
+} as const;
+
+const schema = z
+  .object({
+    patientId: z.string().min(1, "Veuillez sélectionner un patient."),
+    medecinId: z.string().min(1, "Veuillez sélectionner un médecin."),
+    rendezVousId: z.string().optional(),
+    date: z.string().optional(),
+    motif: z.string().trim().optional(),
+    symptomes: z.string().trim().optional(),
+    diagnostic: z.string().trim().optional(),
+    traitement: z.string().trim().optional(),
+    observations: z.string().trim().optional(),
+    poids: z.string().optional(),
+    taille: z.string().optional(),
+    temperature: z.string().optional(),
+    tensionArt: z.string().trim().optional(),
+    pouls: z.string().optional(),
+  })
+  .superRefine((d, ctx) => {
+    for (const champ of ["poids", "taille", "temperature", "pouls"] as const) {
+      const brut = d[champ];
+      if (!brut || brut.trim() === "") continue;
+      const n = Number(brut.replace(",", "."));
+      const { min, max, message } = BORNES[champ];
+      if (!Number.isFinite(n) || n < min || n > max) {
+        ctx.addIssue({ code: "custom", path: [champ], message });
+      }
+    }
+    if (
+      d.tensionArt &&
+      d.tensionArt.trim() !== "" &&
+      !/^\d{1,2}\s*[/.]\s*\d{1,2}$/.test(d.tensionArt.trim())
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["tensionArt"],
+        message: "Format de tension attendu, par exemple 12/8.",
+      });
+    }
+  });
 
 export type ConsultationFormState = {
   error?: string;

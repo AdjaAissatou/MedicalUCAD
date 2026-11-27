@@ -194,50 +194,82 @@ export function ConsultationForm({
             <Input
               id="poids"
               name="poids"
+              type="number"
               inputMode="decimal"
+              min={1}
+              max={400}
+              step={0.1}
+              placeholder="Ex : 62.5"
               defaultValue={initial.poids ?? ""}
               className="mt-1.5"
+              {...errorProps("poids", fe.poids)}
             />
+            <FieldError id="poids-error" errors={fe.poids} />
           </div>
           <div>
             <Label htmlFor="taille">Taille (cm)</Label>
             <Input
               id="taille"
               name="taille"
+              type="number"
               inputMode="decimal"
+              min={20}
+              max={260}
+              step={0.1}
+              placeholder="Ex : 172"
               defaultValue={initial.taille ?? ""}
               className="mt-1.5"
+              {...errorProps("taille", fe.taille)}
             />
+            <FieldError id="taille-error" errors={fe.taille} />
           </div>
           <div>
             <Label htmlFor="temperature">Température (°C)</Label>
             <Input
               id="temperature"
               name="temperature"
+              type="number"
               inputMode="decimal"
+              min={30}
+              max={45}
+              step={0.1}
+              placeholder="Ex : 37.2"
               defaultValue={initial.temperature ?? ""}
               className="mt-1.5"
+              {...errorProps("temperature", fe.temperature)}
             />
+            <FieldError id="temperature-error" errors={fe.temperature} />
           </div>
           <div>
             <Label htmlFor="tensionArt">Tension artérielle</Label>
             <Input
               id="tensionArt"
               name="tensionArt"
+              inputMode="text"
+              pattern="\d{1,2}\s*[/.]\s*\d{1,2}"
               placeholder="Ex : 12/8"
               defaultValue={initial.tensionArt ?? ""}
               className="mt-1.5"
+              {...errorProps("tensionArt", fe.tensionArt)}
             />
+            <FieldError id="tensionArt-error" errors={fe.tensionArt} />
           </div>
           <div>
             <Label htmlFor="pouls">Pouls (bpm)</Label>
             <Input
               id="pouls"
               name="pouls"
+              type="number"
               inputMode="numeric"
+              min={20}
+              max={300}
+              step={1}
+              placeholder="Ex : 72"
               defaultValue={initial.pouls ?? ""}
               className="mt-1.5"
+              {...errorProps("pouls", fe.pouls)}
             />
+            <FieldError id="pouls-error" errors={fe.pouls} />
           </div>
         </CardContent>
       </Card>

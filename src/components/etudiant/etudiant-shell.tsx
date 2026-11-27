@@ -11,9 +11,9 @@ import {
   FileHeart,
   Stethoscope,
   User,
-  HeartPulse,
   LogOut,
 } from "lucide-react";
+import { UcadLogoMark } from "@/components/brand/ucad-logo";
 import type { SessionUser } from "@/lib/session";
 
 const NAV = [
@@ -43,12 +43,12 @@ export function EtudiantShell({
       <header className="sticky top-0 z-20 border-b border-border bg-card/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-3 px-4">
           <Link href="/espace-etudiant" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <HeartPulse className="h-4.5 w-4.5" />
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white ring-1 ring-border">
+              <UcadLogoMark className="h-6 w-6" />
             </span>
             <span className="leading-tight">
               <span className="block text-sm font-bold text-foreground">
-                UCAD Medical
+                UCAD <span className="text-gold">Medical</span>
               </span>
               <span className="block text-[11px] text-muted-foreground">
                 Espace étudiant

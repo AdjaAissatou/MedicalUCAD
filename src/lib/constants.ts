@@ -56,6 +56,17 @@ export const STATUT_RDV_VARIANTS: Record<string, BadgeProps["variant"]> = {
   ABSENT: "destructive",
 };
 
+// Machine à états des rendez-vous : transitions autorisées depuis chaque statut.
+// « Terminé » est un état final ; « Annulé » / « Absent » peuvent être reprogrammés.
+export const TRANSITIONS_RDV: Record<string, readonly string[]> = {
+  PLANIFIE: ["CONFIRME", "EN_COURS", "ANNULE", "ABSENT"],
+  CONFIRME: ["EN_COURS", "PLANIFIE", "ANNULE", "ABSENT"],
+  EN_COURS: ["TERMINE", "ANNULE", "ABSENT"],
+  TERMINE: [],
+  ANNULE: ["PLANIFIE"],
+  ABSENT: ["PLANIFIE"],
+};
+
 export const GROUPES_SANGUINS = [
   "A+",
   "A-",

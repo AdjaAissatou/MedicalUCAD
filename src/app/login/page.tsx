@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { LoginForm } from "./login-form";
-import { HeartPulse, ShieldCheck, CalendarCheck, Pill } from "lucide-react";
+import { ShieldCheck, CalendarCheck, Pill } from "lucide-react";
+import { UcadLogoMark } from "@/components/brand/ucad-logo";
 
 export default async function LoginPage() {
   const user = await getSessionUser();
@@ -28,11 +29,13 @@ export default async function LoginPage() {
         />
 
         <div className="relative flex items-center gap-3 rise">
-          <div className="float flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur ring-1 ring-white/20">
-            <HeartPulse className="h-6 w-6" />
+          <div className="float flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-white/20">
+            <UcadLogoMark className="h-8 w-8" />
           </div>
           <div>
-            <p className="text-lg font-semibold leading-tight">UCAD Medical</p>
+            <p className="text-lg font-semibold leading-tight">
+              UCAD <span className="text-gold">Medical</span>
+            </p>
             <p className="text-sm text-white/60">Services Médicaux</p>
           </div>
         </div>
@@ -84,12 +87,12 @@ export default async function LoginPage() {
 
         <div className="relative w-full max-w-sm rise">
           <div className="lg:hidden mb-8 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
-              <HeartPulse className="h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white ring-1 ring-border shadow-lg shadow-primary/10">
+              <UcadLogoMark className="h-8 w-8" />
             </div>
             <div>
               <p className="text-lg font-semibold leading-tight text-foreground">
-                UCAD Medical
+                UCAD <span className="text-gold">Medical</span>
               </p>
               <p className="text-sm text-muted-foreground">Services Médicaux</p>
             </div>

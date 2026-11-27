@@ -10,10 +10,10 @@ import {
   Stethoscope,
   Share2,
   Pill,
-  HeartPulse,
   ShieldCheck,
   X,
 } from "lucide-react";
+import { UcadLogoMark } from "@/components/brand/ucad-logo";
 
 const NAV = [
   { href: "/tableau-de-bord", label: "Tableau de bord", icon: LayoutDashboard },
@@ -62,11 +62,13 @@ export function AppSidebar({
       >
         <div className="flex h-16 items-center justify-between gap-2 border-b border-white/10 px-5">
           <Link href="/tableau-de-bord" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-gold ring-1 ring-gold/25">
-              <HeartPulse className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-white/15">
+              <UcadLogoMark className="h-6 w-6" />
             </div>
             <div className="leading-tight">
-              <p className="text-sm font-bold text-white">UCAD Medical</p>
+              <p className="text-sm font-bold text-white">
+                UCAD <span className="text-gold">Medical</span>
+              </p>
               <p className="text-[11px] text-sidebar-foreground/60">
                 Espace de gestion médicale
               </p>

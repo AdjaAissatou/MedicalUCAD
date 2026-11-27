@@ -91,18 +91,22 @@ export function PatientForm({
         <CardContent className="grid gap-5 sm:grid-cols-2">
           <div>
             <Label htmlFor="matricule" required>
-              Matricule / N° étudiant
+              Matricule / N° carte étudiant
             </Label>
             <Input
               id="matricule"
               name="matricule"
               defaultValue={initial.matricule}
-              placeholder="Ex : 20231234"
+              placeholder="Ex : 20231234 — n° de carte étudiant"
               required
               autoComplete="off"
               className="mt-1.5"
               {...errorProps("matricule", fe.matricule)}
             />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Identifiant unique : numéro de carte étudiant, ou matricule du
+              personnel.
+            </p>
             <FieldError id="matricule-error" errors={fe.matricule} />
           </div>
           <div>
