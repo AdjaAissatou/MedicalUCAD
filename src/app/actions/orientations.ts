@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
+import { estSoignant } from "@/lib/authz";
 
 const schema = z.object({
   patientId: z.string().min(1, "Veuillez sélectionner un patient."),
@@ -24,6 +25,11 @@ export async function creerOrientation(
 ): Promise<OrientationFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!estSoignant(user)) {
+    return {
+      error: "Action réservée au personnel soignant (médecin, infirmier).",
+    };
+  }
 
   const parsed = schema.safeParse({
     patientId: formData.get("patientId"),
@@ -58,6 +64,9 @@ export async function creerOrientation(
 export async function changerStatutOrientation(id: string, statut: string) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!estSoignant(user)) {
+    throw new Error("Action non autorisée.");
+  }
   if (!["EN_ATTENTE", "REALISEE", "ANNULEE"].includes(statut)) {
     throw new Error("Statut invalide.");
   }

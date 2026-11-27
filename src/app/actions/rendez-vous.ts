@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { STATUTS_RDV, TRANSITIONS_RDV } from "@/lib/constants";
+import { gereDossiers } from "@/lib/authz";
 
 const rdvSchema = z.object({
   patientId: z.string().min(1, "Veuillez sélectionner un patient."),
@@ -28,6 +29,12 @@ export async function creerRendezVous(
 ): Promise<RdvFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!gereDossiers(user)) {
+    return {
+      error:
+        "Action non autorisée : votre rôle ne permet pas de gérer les rendez-vous.",
+    };
+  }
 
   const parsed = rdvSchema.safeParse({
     patientId: formData.get("patientId"),
@@ -72,6 +79,9 @@ export async function creerRendezVous(
 export async function changerStatutRdv(id: string, statut: string) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!gereDossiers(user)) {
+    throw new Error("Action non autorisée.");
+  }
   if (!STATUTS_RDV.includes(statut as (typeof STATUTS_RDV)[number])) {
     throw new Error("Statut invalide.");
   }

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
+import { estSoignant } from "@/lib/authz";
 
 const BORNES = {
   poids: {
@@ -125,6 +126,11 @@ export async function creerConsultation(
 ): Promise<ConsultationFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!estSoignant(user)) {
+    return {
+      error: "Action réservée au personnel soignant (médecin, infirmier).",
+    };
+  }
 
   const parsed = lire(formData);
   if (!parsed.success) {
@@ -168,6 +174,11 @@ export async function modifierConsultation(
 ): Promise<ConsultationFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!estSoignant(user)) {
+    return {
+      error: "Action réservée au personnel soignant (médecin, infirmier).",
+    };
+  }
 
   const parsed = lire(formData);
   if (!parsed.success) {

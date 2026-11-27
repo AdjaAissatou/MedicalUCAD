@@ -14,36 +14,30 @@ import {
   X,
 } from "lucide-react";
 import { UcadLogoMark } from "@/components/brand/ucad-logo";
+import { peutAccederModule } from "@/lib/authz";
 
 const NAV = [
-  { href: "/tableau-de-bord", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/patients", label: "Dossiers médicaux", icon: Users },
-  { href: "/rendez-vous", label: "Rendez-vous", icon: CalendarDays },
-  { href: "/consultations", label: "Consultations", icon: Stethoscope },
-  { href: "/orientations", label: "Orientations", icon: Share2 },
-  { href: "/pharmacie", label: "Pharmacie", icon: Pill },
-];
+  { href: "/tableau-de-bord", cle: "tableau-de-bord", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/patients", cle: "patients", label: "Dossiers médicaux", icon: Users },
+  { href: "/rendez-vous", cle: "rendez-vous", label: "Rendez-vous", icon: CalendarDays },
+  { href: "/consultations", cle: "consultations", label: "Consultations", icon: Stethoscope },
+  { href: "/orientations", cle: "orientations", label: "Orientations", icon: Share2 },
+  { href: "/pharmacie", cle: "pharmacie", label: "Pharmacie", icon: Pill },
+  { href: "/administration", cle: "administration", label: "Administration", icon: ShieldCheck },
+] as const;
 
 export function AppSidebar({
   open,
   onClose,
-  isAdmin = false,
+  role,
 }: {
   open?: boolean;
   onClose?: () => void;
-  isAdmin?: boolean;
+  role: string;
 }) {
   const pathname = usePathname();
-  const nav = isAdmin
-    ? [
-        ...NAV,
-        {
-          href: "/administration",
-          label: "Administration",
-          icon: ShieldCheck,
-        },
-      ]
-    : NAV;
+  // Navigation filtrée par rôle : chaque profil ne voit que ses modules.
+  const nav = NAV.filter((item) => peutAccederModule({ role }, item.cle));
 
   return (
     <>

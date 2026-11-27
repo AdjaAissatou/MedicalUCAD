@@ -6,7 +6,6 @@ import { AppSidebar } from "./app-sidebar";
 import { UserMenu } from "./user-menu";
 import { ThemeToggle } from "./theme-toggle";
 import { Menu } from "lucide-react";
-import { estAdmin } from "@/lib/authz";
 import type { SessionUser } from "@/lib/session";
 
 export function AppShell({
@@ -24,7 +23,7 @@ export function AppShell({
       <AppSidebar
         open={open}
         onClose={() => setOpen(false)}
-        isAdmin={estAdmin(user)}
+        role={user.role}
       />
 
       <div className="flex-1 flex flex-col min-w-0">

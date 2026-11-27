@@ -38,3 +38,47 @@ export function gereDossiers(user: Pick<SessionUser, "role"> | null): boolean {
     user?.role === "SECRETAIRE"
   );
 }
+
+/** Peut supprimer un dossier patient (action sensible, réservée). */
+export function peutSupprimerDossier(
+  user: Pick<SessionUser, "role"> | null
+): boolean {
+  return user?.role === "ADMIN" || user?.role === "MEDECIN";
+}
+
+/** Clés des modules de l'espace personnel. */
+export type CleModule =
+  | "tableau-de-bord"
+  | "patients"
+  | "rendez-vous"
+  | "consultations"
+  | "orientations"
+  | "pharmacie"
+  | "administration";
+
+/**
+ * Accès à un module (navigation + ouverture des pages), par rôle.
+ * Source unique de vérité pour séparer logiquement les espaces :
+ *   soins · accueil/dossiers · pharmacie · administration.
+ */
+export function peutAccederModule(
+  user: Pick<SessionUser, "role"> | null,
+  cle: CleModule
+): boolean {
+  switch (cle) {
+    case "tableau-de-bord":
+      return estPersonnel(user);
+    case "patients":
+    case "rendez-vous":
+      return gereDossiers(user);
+    case "consultations":
+    case "orientations":
+      return estSoignant(user);
+    case "pharmacie":
+      return gerePharmacie(user);
+    case "administration":
+      return estAdmin(user);
+    default:
+      return false;
+  }
+}

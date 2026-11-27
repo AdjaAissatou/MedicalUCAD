@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { TYPES_PATIENT } from "@/lib/constants";
-import { gereDossiers } from "@/lib/authz";
+import { gereDossiers, peutSupprimerDossier } from "@/lib/authz";
 
 const patientSchema = z.object({
   matricule: z.string().trim().min(1, "Le matricule est obligatoire."),
@@ -208,7 +208,7 @@ export async function modifierPatient(
 export async function supprimerPatient(id: string) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (user.role !== "ADMIN" && user.role !== "MEDECIN") {
+  if (!peutSupprimerDossier(user)) {
     throw new Error("Action non autorisée.");
   }
   await prisma.patient.delete({ where: { id } });
