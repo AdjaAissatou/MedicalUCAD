@@ -17,6 +17,9 @@ import {
   CalendarClock,
   ArrowRight,
   TriangleAlert,
+  CalendarPlus,
+  UserPlus,
+  Share2,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -102,6 +105,23 @@ export default async function TableauDeBord() {
   const voitRdv = peutAccederModule(user, "rendez-vous");
   const voitPharma = peutAccederModule(user, "pharmacie");
 
+  const colsStats =
+    stats.length >= 4
+      ? "sm:grid-cols-2 xl:grid-cols-4"
+      : stats.length === 3
+        ? "sm:grid-cols-3"
+        : stats.length === 2
+          ? "sm:grid-cols-2"
+          : "sm:grid-cols-1";
+
+  const actions = [
+    { href: "/consultations/nouvelle", label: "Nouvelle consultation", icon: Stethoscope, cle: "consultations" as const },
+    { href: "/rendez-vous/nouveau", label: "Nouveau rendez-vous", icon: CalendarPlus, cle: "rendez-vous" as const },
+    { href: "/patients/nouveau", label: "Nouveau dossier", icon: UserPlus, cle: "patients" as const },
+    { href: "/orientations/nouvelle", label: "Nouvelle orientation", icon: Share2, cle: "orientations" as const },
+    { href: "/pharmacie/nouveau", label: "Ajouter un médicament", icon: Pill, cle: "pharmacie" as const },
+  ].filter((a) => peutAccederModule(user, a.cle));
+
   return (
     <div>
       {/* En-tête premium */}
@@ -130,7 +150,7 @@ export default async function TableauDeBord() {
       </div>
 
       {stats.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className={`grid gap-4 ${colsStats}`}>
           {stats.map((s, i) => (
             <Reveal key={s.label} index={i}>
               <Link href={s.href}>
@@ -159,10 +179,34 @@ export default async function TableauDeBord() {
         </div>
       )}
 
+      {actions.length > 0 && (
+        <div className="mt-6">
+          <h2 className="mb-3 text-sm font-semibold text-foreground">
+            Accès rapides
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {actions.map((a) => (
+              <Link
+                key={a.href}
+                href={a.href}
+                className="card-hover flex items-center gap-3 rounded-xl border border-border bg-card p-4"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <a.icon className="h-5 w-5" />
+                </span>
+                <span className="text-sm font-medium text-foreground">
+                  {a.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {voitRdv || voitPharma ? (
         <div className="mt-6 grid gap-6 lg:grid-cols-3">
           {voitRdv && (
-            <Card className="lg:col-span-2">
+            <Card className={voitPharma ? "lg:col-span-2" : "lg:col-span-3"}>
               <div className="flex items-center justify-between border-b border-border p-5">
                 <div className="flex items-center gap-2">
                   <CalendarClock className="h-5 w-5 text-primary" />
