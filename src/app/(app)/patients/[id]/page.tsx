@@ -14,6 +14,8 @@ import {
   TYPE_PATIENT_LABELS,
   STATUT_RDV_LABELS,
   STATUT_RDV_VARIANTS,
+  STATUT_EXAMEN_LABELS,
+  STATUT_EXAMEN_VARIANTS,
 } from "@/lib/constants";
 import {
   ArrowLeft,
@@ -27,6 +29,7 @@ import {
   CalendarDays,
   FileText,
   Share2,
+  FlaskConical,
   History,
 } from "lucide-react";
 
@@ -85,6 +88,10 @@ export default async function PatientDetail({
         include: { lignes: true },
         orderBy: { date: "desc" },
       },
+      demandesExamen: {
+        include: { resultat: true },
+        orderBy: { date: "desc" },
+      },
     },
   });
 
@@ -120,7 +127,12 @@ export default async function PatientDetail({
   type EvtChrono = {
     id: string;
     date: Date;
-    type: "consultation" | "rendezvous" | "orientation" | "ordonnance";
+    type:
+      | "consultation"
+      | "rendezvous"
+      | "orientation"
+      | "ordonnance"
+      | "examen";
     titre: string;
     detail?: string;
     auteur?: string;
@@ -166,6 +178,15 @@ export default async function PatientDetail({
       statut: LIBELLE_STATUT[ord.statut] ?? ord.statut,
       statutVariant: VARIANT_STATUT[ord.statut] ?? "neutral",
     })),
+    ...patient.demandesExamen.map((ex) => ({
+      id: `ex-${ex.id}`,
+      date: ex.date,
+      type: "examen" as const,
+      titre: `Examen — ${ex.type}`,
+      detail: ex.resultat?.conclusion ?? ex.motif ?? undefined,
+      statut: STATUT_EXAMEN_LABELS[ex.statut] ?? ex.statut,
+      statutVariant: STATUT_EXAMEN_VARIANTS[ex.statut],
+    })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const CHRONO_STYLE: Record<
@@ -179,6 +200,7 @@ export default async function PatientDetail({
       icon: FileText,
       tint: "bg-secondary text-secondary-foreground",
     },
+    examen: { icon: FlaskConical, tint: "bg-primary/10 text-primary" },
   };
 
   return (
@@ -246,6 +268,12 @@ export default async function PatientDetail({
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4" />
                 Orienter
+              </Button>
+            </Link>
+            <Link href={`/examens/nouvelle?patient=${patient.id}`}>
+              <Button variant="outline" size="sm">
+                <FlaskConical className="h-4 w-4" />
+                Examen
               </Button>
             </Link>
             <Link href={`/patients/${patient.id}/modifier`}>

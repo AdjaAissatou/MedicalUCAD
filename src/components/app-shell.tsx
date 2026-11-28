@@ -15,6 +15,7 @@ import {
   CalendarDays,
   Stethoscope,
   Share2,
+  FlaskConical,
   Pill,
   ShieldCheck,
   Menu,
@@ -29,6 +30,7 @@ const NAV = [
   { href: "/rendez-vous", cle: "rendez-vous", label: "Rendez-vous", icon: CalendarDays },
   { href: "/consultations", cle: "consultations", label: "Consultations", icon: Stethoscope },
   { href: "/orientations", cle: "orientations", label: "Orientations", icon: Share2 },
+  { href: "/examens", cle: "examens", label: "Examens", icon: FlaskConical },
   { href: "/pharmacie", cle: "pharmacie", label: "Pharmacie", icon: Pill },
   { href: "/administration", cle: "administration", label: "Administration", icon: ShieldCheck },
 ] as const;

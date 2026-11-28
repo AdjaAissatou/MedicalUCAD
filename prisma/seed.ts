@@ -356,6 +356,40 @@ async function main() {
     },
   });
 
+  console.log("🧪 Création des demandes d'examens (démo)…");
+  await prisma.demandeExamen.create({
+    data: {
+      patientId: patients[0].id,
+      medecinId: medecin1.id,
+      consultationId: consultation.id,
+      type: "NFS (Numération formule sanguine)",
+      categorie: "BIOLOGIE",
+      motif: "Bilan de suivi asthme.",
+      priorite: "NORMALE",
+      statut: "DEMANDE",
+      date: jour(-4, 10, 0),
+    },
+  });
+  const demandeTerminee = await prisma.demandeExamen.create({
+    data: {
+      patientId: patients[2].id,
+      medecinId: medecin1.id,
+      type: "Glycémie à jeun",
+      categorie: "BIOLOGIE",
+      priorite: "NORMALE",
+      statut: "TERMINE",
+      date: jour(-10, 9, 0),
+    },
+  });
+  await prisma.resultatExamen.create({
+    data: {
+      demandeId: demandeTerminee.id,
+      valeurs: "Glycémie : 0,98 g/L",
+      conclusion: "Valeur dans les normes.",
+      date: jour(-9, 14, 0),
+    },
+  });
+
   console.log("💊 Création du stock pharmacie…");
   await prisma.medicament.createMany({
     data: [

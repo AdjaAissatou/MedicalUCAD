@@ -61,6 +61,7 @@ export type CleModule =
   | "rendez-vous"
   | "consultations"
   | "orientations"
+  | "examens"
   | "pharmacie"
   | "administration"
   | "supervision";
@@ -77,14 +78,21 @@ export function peutAccederModule(
   switch (cle) {
     case "tableau-de-bord":
       // Tableau de bord opérationnel : personnel de terrain seulement.
-      // L'admin technique et la direction ont leur propre espace.
-      return estPersonnel(user) && !estAdmin(user) && !estDirection(user);
+      // Admin, direction et laborantin ont leur propre espace.
+      return (
+        estPersonnel(user) &&
+        !estAdmin(user) &&
+        !estDirection(user) &&
+        !estLaborantin(user)
+      );
     case "patients":
     case "rendez-vous":
       return gereDossiers(user);
     case "consultations":
     case "orientations":
       return estSoignant(user);
+    case "examens":
+      return estSoignant(user) || estLaborantin(user);
     case "pharmacie":
       return gerePharmacie(user);
     case "administration":
@@ -104,5 +112,6 @@ export function accueilParRole(
   if (user.role === "ETUDIANT") return "/espace-etudiant";
   if (user.role === "ADMIN") return "/administration";
   if (user.role === "DIRECTION") return "/supervision";
+  if (user.role === "LABORANTIN") return "/examens";
   return "/tableau-de-bord";
 }

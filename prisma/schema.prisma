@@ -36,6 +36,8 @@ model User {
   rendezVous    RendezVous[]   @relation("MedecinRendezVous")
   consultations Consultation[] @relation("MedecinConsultations")
   orientations  Orientation[]  @relation("MedecinOrientations")
+  examensPrescrits DemandeExamen[]  @relation("MedecinExamens")
+  resultatsExamen  ResultatExamen[] @relation("LaborantinResultats")
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -63,6 +65,7 @@ model Patient {
   consultations Consultation[]
   orientations  Orientation[]
   ordonnances   Ordonnance[]
+  demandesExamen DemandeExamen[]
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -131,6 +134,45 @@ model Vaccination {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Examens de laboratoire / imagerie
+// Statut : DEMANDE | EN_COURS | TERMINE | ANNULE
+// ─────────────────────────────────────────────────────────────
+model DemandeExamen {
+  id             String        @id @default(cuid())
+  patientId      String
+  patient        Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  medecinId      String
+  medecin        User          @relation("MedecinExamens", fields: [medecinId], references: [id])
+  consultationId String?
+  consultation   Consultation? @relation(fields: [consultationId], references: [id])
+  type           String // libellé (ex: NFS, Glycémie, Radiographie thorax)
+  categorie      String        @default("BIOLOGIE") // BIOLOGIE | IMAGERIE | AUTRE
+  motif          String?
+  priorite       String        @default("NORMALE") // NORMALE | URGENTE
+  statut         String        @default("DEMANDE") // DEMANDE | EN_COURS | TERMINE | ANNULE
+  date           DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+
+  resultat ResultatExamen?
+
+  @@index([patientId])
+  @@index([statut])
+}
+
+model ResultatExamen {
+  id           String        @id @default(cuid())
+  demandeId    String        @unique
+  demande      DemandeExamen @relation(fields: [demandeId], references: [id], onDelete: Cascade)
+  laborantinId String?
+  laborantin   User?         @relation("LaborantinResultats", fields: [laborantinId], references: [id])
+  valeurs      String?
+  conclusion   String?
+  documentUrl  String?
+  date         DateTime      @default(now())
+  createdAt    DateTime      @default(now())
+}
+
+// ─────────────────────────────────────────────────────────────
 // Rendez-vous
 // Statut : PLANIFIE | CONFIRME | EN_COURS | TERMINE | ANNULE | ABSENT
 // ─────────────────────────────────────────────────────────────
@@ -179,8 +221,9 @@ model Consultation {
   pouls        Int?
   createdAt    DateTime    @default(now())
 
-  ordonnances  Ordonnance[]
-  orientations Orientation[]
+  ordonnances    Ordonnance[]
+  orientations   Orientation[]
+  demandesExamen DemandeExamen[]
 
   @@index([patientId])
 }

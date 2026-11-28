@@ -93,3 +93,40 @@ export const FACULTES = [
   "Personnel administratif et technique",
   "Autre",
 ] as const;
+
+// ─── Examens ───
+export const STATUTS_EXAMEN = [
+  "DEMANDE",
+  "EN_COURS",
+  "TERMINE",
+  "ANNULE",
+] as const;
+
+export const STATUT_EXAMEN_LABELS: Record<string, string> = {
+  DEMANDE: "Demandé",
+  EN_COURS: "En cours",
+  TERMINE: "Terminé",
+  ANNULE: "Annulé",
+};
+
+export const STATUT_EXAMEN_VARIANTS: Record<string, BadgeProps["variant"]> = {
+  DEMANDE: "info",
+  EN_COURS: "warning",
+  TERMINE: "success",
+  ANNULE: "neutral",
+};
+
+export const CATEGORIES_EXAMEN = ["BIOLOGIE", "IMAGERIE", "AUTRE"] as const;
+
+export const CATEGORIE_EXAMEN_LABELS: Record<string, string> = {
+  BIOLOGIE: "Biologie",
+  IMAGERIE: "Imagerie",
+  AUTRE: "Autre",
+};
+
+export const PRIORITES_EXAMEN = ["NORMALE", "URGENTE"] as const;
+
+export const PRIORITE_EXAMEN_LABELS: Record<string, string> = {
+  NORMALE: "Normale",
+  URGENTE: "Urgente",
+};
