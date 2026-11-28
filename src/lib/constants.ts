@@ -29,8 +29,8 @@ export const TYPES_PATIENT = ["ETUDIANT", "PERSONNEL", "AUTRE"] as const;
 
 export const TYPE_PATIENT_LABELS: Record<string, string> = {
   ETUDIANT: "Étudiant",
-  PERSONNEL: "Personnel",
-  AUTRE: "Autre",
+  PERSONNEL: "Personnel UCAD (enseignant, agent)",
+  AUTRE: "Autre (externe)",
 };
 
 export const STATUTS_RDV = [
@@ -129,4 +129,31 @@ export const PRIORITES_EXAMEN = ["NORMALE", "URGENTE"] as const;
 export const PRIORITE_EXAMEN_LABELS: Record<string, string> = {
   NORMALE: "Normale",
   URGENTE: "Urgente",
+};
+
+// ─── Spécialités (proposées selon le rôle) ───
+export const SPECIALITES_MEDECIN = [
+  "Médecine générale",
+  "Médecine du travail",
+  "Cardiologie",
+  "Dermatologie",
+  "Gynécologie",
+  "Pédiatrie",
+  "Ophtalmologie",
+  "Oto-rhino-laryngologie (ORL)",
+  "Psychiatrie",
+  "Gastro-entérologie",
+  "Pneumologie",
+] as const;
+
+export const SPECIALITES_INFIRMIER = [
+  "Soins infirmiers généraux",
+  "Soins d'urgence",
+  "Santé communautaire",
+] as const;
+
+/** Spécialités disponibles par rôle (absent = champ spécialité masqué). */
+export const SPECIALITES_PAR_ROLE: Record<string, readonly string[]> = {
+  MEDECIN: SPECIALITES_MEDECIN,
+  INFIRMIER: SPECIALITES_INFIRMIER,
 };

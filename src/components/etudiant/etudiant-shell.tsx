@@ -44,7 +44,7 @@ export function EtudiantShell({
     <div className="min-h-screen app-canvas">
       {/* En-tête */}
       <header className="sticky top-0 z-20 border-b border-border bg-card/85 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-3 px-4">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link href="/espace-etudiant" className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white ring-1 ring-border">
               <UcadLogoMark className="h-6 w-6" />
@@ -60,7 +60,7 @@ export function EtudiantShell({
           </Link>
 
           {/* Nav desktop */}
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-1 lg:flex">
             {NAV.map(({ href, label, icon: Icon, exact }) => {
               const a = actif(pathname, href, exact);
               return (
@@ -68,7 +68,7 @@ export function EtudiantShell({
                   key={href}
                   href={href}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     a
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -96,7 +96,7 @@ export function EtudiantShell({
             </Link>
             <ThemeToggle className="h-8 w-8" />
             <span className="hidden sm:flex flex-col items-end leading-tight">
-              <span className="text-sm font-medium text-foreground">
+              <span className="whitespace-nowrap text-sm font-medium text-foreground">
                 {user.prenom} {user.nom}
               </span>
               <span className="text-[11px] text-muted-foreground">Étudiant</span>
@@ -120,13 +120,13 @@ export function EtudiantShell({
       {/* Contenu */}
       <main
         key={pathname}
-        className="reveal-fade mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-10"
+        className="reveal-fade mx-auto max-w-5xl px-4 pb-28 pt-6 sm:px-6 lg:pb-10"
       >
         {children}
       </main>
 
       {/* Barre d'onglets mobile */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-3xl items-stretch justify-around">
           {NAV.map(({ href, label, icon: Icon, exact }) => {
             const a = actif(pathname, href, exact);

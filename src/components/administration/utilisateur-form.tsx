@@ -1,13 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { ROLES, ROLE_LABELS } from "@/lib/constants";
+import { ROLES, ROLE_LABELS, SPECIALITES_PAR_ROLE } from "@/lib/constants";
 import { AlertCircle, Save } from "lucide-react";
 import type { UtilisateurFormState } from "@/app/actions/utilisateurs";
 
@@ -56,6 +56,8 @@ export function UtilisateurForm({
     FormData
   >(action, {});
   const fe = state.fieldErrors ?? {};
+  const [role, setRole] = useState(initial.role ?? "SECRETAIRE");
+  const specialites = SPECIALITES_PAR_ROLE[role];
 
   return (
     <form action={formAction}>
@@ -125,7 +127,8 @@ export function UtilisateurForm({
             <Select
               id="role"
               name="role"
-              defaultValue={initial.role ?? "SECRETAIRE"}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               className="mt-1.5"
             >
               {ROLES.map((r) => (
@@ -135,16 +138,28 @@ export function UtilisateurForm({
               ))}
             </Select>
           </div>
-          <div>
-            <Label htmlFor="specialite">Spécialité</Label>
-            <Input
-              id="specialite"
-              name="specialite"
-              defaultValue={initial.specialite ?? ""}
-              placeholder="Ex : Médecine générale"
-              className="mt-1.5"
-            />
-          </div>
+          {specialites ? (
+            <div>
+              <Label htmlFor="specialite">Spécialité</Label>
+              <Select
+                id="specialite"
+                name="specialite"
+                key={role}
+                defaultValue={initial.role === role ? initial.specialite ?? "" : ""}
+                className="mt-1.5"
+              >
+                <option value="">— Non précisée —</option>
+                {specialites.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          ) : (
+            // Pas de spécialité pour ce rôle : on vide la valeur côté serveur.
+            <input type="hidden" name="specialite" value="" />
+          )}
           <div>
             <Label htmlFor="telephone">Téléphone</Label>
             <Input

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { STATUTS_RDV, TRANSITIONS_RDV } from "@/lib/constants";
 import { gereDossiers } from "@/lib/authz";
+import { verifierDisponibilite, messageIndispo } from "@/lib/rdv";
 
 const rdvSchema = z.object({
   patientId: z.string().min(1, "Veuillez sélectionner un patient."),
@@ -53,6 +54,18 @@ export async function creerRendezVous(
   const dateHeure = new Date(`${d.date}T${d.heure}`);
   if (Number.isNaN(dateHeure.getTime())) {
     return { fieldErrors: { date: ["Date ou heure invalide."] } };
+  }
+
+  // Horaires d'ouverture + créneau libre (médecin et patient).
+  const indispo = await verifierDisponibilite({
+    medecinId: d.medecinId,
+    patientId: d.patientId,
+    dateHeure,
+    duree: d.duree,
+  });
+  if (indispo) {
+    const champ = indispo === "dimanche" ? "date" : "heure";
+    return { fieldErrors: { [champ]: [messageIndispo(indispo)] } };
   }
 
   try {

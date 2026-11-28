@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
+import { verifierDisponibilite, messageIndispo } from "@/lib/rdv";
 
 /** Récupère la session étudiant + son patientId, ou redirige. */
 async function requireEtudiant() {
@@ -59,6 +60,17 @@ export async function reserverRendezVous(
     where: { id: d.medecinId, role: "MEDECIN", actif: true },
   });
   if (!medecin) return { fieldErrors: { medecinId: ["Médecin invalide."] } };
+
+  // Horaires d'ouverture + créneau libre (médecin et étudiant).
+  const indispo = await verifierDisponibilite({
+    medecinId: d.medecinId,
+    patientId,
+    dateHeure,
+  });
+  if (indispo) {
+    const champ = indispo === "dimanche" ? "date" : "heure";
+    return { fieldErrors: { [champ]: [messageIndispo(indispo, true)] } };
+  }
 
   try {
     await prisma.rendezVous.create({
