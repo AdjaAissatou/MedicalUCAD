@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { estSoignant, estLaborantin } from "@/lib/authz";
 import { journaliser } from "@/lib/audit";
+import { notifierPatient } from "@/lib/notifications";
 import { STATUTS_EXAMEN } from "@/lib/constants";
 
 export type ExamenFormState = {
@@ -122,7 +123,7 @@ export async function enregistrerResultat(
   try {
     const demande = await prisma.demandeExamen.findUnique({
       where: { id: d.demandeId },
-      select: { patientId: true },
+      select: { patientId: true, type: true },
     });
     patientId = demande?.patientId ?? "";
     await prisma.resultatExamen.upsert({
@@ -146,6 +147,13 @@ export async function enregistrerResultat(
       data: { statut: "TERMINE" },
     });
     await journaliser({ user, action: "examen.resultat", cible: `examen#${d.demandeId}` });
+    if (patientId) {
+      await notifierPatient(patientId, {
+        titre: "Résultat d'examen disponible",
+        message: demande?.type ? `${demande.type} — résultat disponible` : undefined,
+        lien: "/espace-etudiant/consultations",
+      });
+    }
   } catch {
     return { error: "Une erreur est survenue lors de l'enregistrement du résultat." };
   }

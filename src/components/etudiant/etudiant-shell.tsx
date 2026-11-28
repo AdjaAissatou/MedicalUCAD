@@ -11,6 +11,7 @@ import {
   FileHeart,
   Stethoscope,
   User,
+  Bell,
   LogOut,
 } from "lucide-react";
 import { UcadLogoMark } from "@/components/brand/ucad-logo";
@@ -31,9 +32,11 @@ function actif(pathname: string, href: string, exact?: boolean) {
 export function EtudiantShell({
   user,
   children,
+  notifications = 0,
 }: {
   user: SessionUser;
   children: React.ReactNode;
+  notifications?: number;
 }) {
   const pathname = usePathname();
 
@@ -79,6 +82,18 @@ export function EtudiantShell({
           </nav>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/espace-etudiant/notifications"
+              className="relative flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+              aria-label="Notifications"
+            >
+              <Bell className="h-[18px] w-[18px]" />
+              {notifications > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                  {notifications > 9 ? "9+" : notifications}
+                </span>
+              )}
+            </Link>
             <ThemeToggle className="h-8 w-8" />
             <span className="hidden sm:flex flex-col items-end leading-tight">
               <span className="text-sm font-medium text-foreground">

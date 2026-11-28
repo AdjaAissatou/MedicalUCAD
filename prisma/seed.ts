@@ -253,7 +253,7 @@ async function main() {
   }
 
   console.log("🎓 Création d'un accès étudiant de démonstration…");
-  await prisma.user.create({
+  const compteEtudiant = await prisma.user.create({
     data: {
       email: "aissatou.faye@ucad.edu.sn",
       motDePasse,
@@ -387,6 +387,34 @@ async function main() {
       valeurs: "Glycémie : 0,98 g/L",
       conclusion: "Valeur dans les normes.",
       date: jour(-9, 14, 0),
+    },
+  });
+
+  // Portail patient : un résultat disponible + notification (démo, Aïssatou)
+  const examenAissatou = await prisma.demandeExamen.create({
+    data: {
+      patientId: patients[0].id,
+      medecinId: medecin1.id,
+      type: "Spirométrie",
+      categorie: "AUTRE",
+      statut: "TERMINE",
+      date: jour(-3, 11, 0),
+    },
+  });
+  await prisma.resultatExamen.create({
+    data: {
+      demandeId: examenAissatou.id,
+      valeurs: "VEMS 85 % de la théorique.",
+      conclusion: "Fonction respiratoire satisfaisante.",
+      date: jour(-2, 9, 0),
+    },
+  });
+  await prisma.notification.create({
+    data: {
+      userId: compteEtudiant.id,
+      titre: "Résultat d'examen disponible",
+      message: "Spirométrie — résultat disponible",
+      lien: "/espace-etudiant/consultations",
     },
   });
 

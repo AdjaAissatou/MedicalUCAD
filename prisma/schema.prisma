@@ -38,6 +38,7 @@ model User {
   orientations  Orientation[]  @relation("MedecinOrientations")
   examensPrescrits DemandeExamen[]  @relation("MedecinExamens")
   resultatsExamen  ResultatExamen[] @relation("LaborantinResultats")
+  notifications    Notification[]
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -170,6 +171,22 @@ model ResultatExamen {
   documentUrl  String?
   date         DateTime      @default(now())
   createdAt    DateTime      @default(now())
+}
+
+// ─────────────────────────────────────────────────────────────
+// Notifications destinées aux patients (portail étudiant)
+// ─────────────────────────────────────────────────────────────
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  titre     String
+  message   String?
+  lien      String?
+  lu        Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 // ─────────────────────────────────────────────────────────────
