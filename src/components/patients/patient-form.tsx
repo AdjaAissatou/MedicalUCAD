@@ -34,10 +34,6 @@ export type PatientInitial = {
   type?: string;
   faculte?: string | null;
   groupeSanguin?: string | null;
-  allergies?: string | null;
-  antecedentsMedicaux?: string | null;
-  antecedentsChirurgicaux?: string | null;
-  antecedentsFamiliaux?: string | null;
   traitementEnCours?: string | null;
   observations?: string | null;
 };
@@ -263,45 +259,6 @@ export function PatientForm({
               ))}
             </Select>
           </div>
-          <div>
-            <Label htmlFor="allergies">Allergies connues</Label>
-            <Input
-              id="allergies"
-              name="allergies"
-              defaultValue={initial.allergies ?? ""}
-              placeholder="Ex : Pénicilline, arachide…"
-              className="mt-1.5"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label htmlFor="antecedentsMedicaux">Antécédents médicaux</Label>
-            <Textarea
-              id="antecedentsMedicaux"
-              name="antecedentsMedicaux"
-              defaultValue={initial.antecedentsMedicaux ?? ""}
-              className="mt-1.5"
-            />
-          </div>
-          <div>
-            <Label htmlFor="antecedentsChirurgicaux">
-              Antécédents chirurgicaux
-            </Label>
-            <Textarea
-              id="antecedentsChirurgicaux"
-              name="antecedentsChirurgicaux"
-              defaultValue={initial.antecedentsChirurgicaux ?? ""}
-              className="mt-1.5"
-            />
-          </div>
-          <div>
-            <Label htmlFor="antecedentsFamiliaux">Antécédents familiaux</Label>
-            <Textarea
-              id="antecedentsFamiliaux"
-              name="antecedentsFamiliaux"
-              defaultValue={initial.antecedentsFamiliaux ?? ""}
-              className="mt-1.5"
-            />
-          </div>
           <div className="sm:col-span-2">
             <Label htmlFor="traitementEnCours">Traitement en cours</Label>
             <Textarea
@@ -320,6 +277,10 @@ export function PatientForm({
               className="mt-1.5"
             />
           </div>
+          <p className="sm:col-span-2 text-xs text-muted-foreground">
+            Les antécédents, allergies et vaccinations se gèrent en détail
+            depuis la fiche du patient, après création.
+          </p>
         </CardContent>
       </Card>
 

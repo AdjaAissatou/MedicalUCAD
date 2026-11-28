@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import { AccesEtudiantCard } from "@/components/patients/acces-etudiant-card";
+import { DossierStructure } from "@/components/patients/dossier-structure";
 import { initiales, age, formatDateHeure } from "@/lib/utils";
 import {
   TYPE_PATIENT_LABELS,
@@ -22,7 +23,6 @@ import {
   Mail,
   MapPin,
   Droplet,
-  TriangleAlert,
   Stethoscope,
   CalendarDays,
   FileText,
@@ -61,7 +61,13 @@ export default async function PatientDetail({
   const patient = await prisma.patient.findUnique({
     where: { id },
     include: {
-      dossier: true,
+      dossier: {
+        include: {
+          antecedents: { orderBy: { createdAt: "desc" } },
+          allergieList: { orderBy: { createdAt: "desc" } },
+          vaccinations: { orderBy: { createdAt: "desc" } },
+        },
+      },
       compte: { select: { email: true, actif: true } },
       consultations: {
         include: { medecin: true },
@@ -282,28 +288,19 @@ export default async function PatientDetail({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Constantes clés</CardTitle>
+              <CardTitle className="text-base">Groupe sanguin</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent>
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Droplet className="h-4 w-4" />
-                  Groupe sanguin
+                  Groupe
                 </span>
                 {d?.groupeSanguin ? (
                   <Badge variant="destructive">{d.groupeSanguin}</Badge>
                 ) : (
                   <span className="text-sm text-muted-foreground">—</span>
                 )}
-              </div>
-              <div className="border-t border-border pt-3">
-                <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <TriangleAlert className="h-4 w-4 text-amber-600" />
-                  Allergies
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
-                  {d?.allergies?.trim() ? d.allergies : "Aucune connue"}
-                </p>
               </div>
             </CardContent>
           </Card>
@@ -317,35 +314,34 @@ export default async function PatientDetail({
 
         {/* Colonne principale */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Dossier médical */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Dossier médical</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <dl className="grid gap-5 sm:grid-cols-2">
-                <InfoLigne
-                  label="Antécédents médicaux"
-                  value={d?.antecedentsMedicaux}
-                />
-                <InfoLigne
-                  label="Antécédents chirurgicaux"
-                  value={d?.antecedentsChirurgicaux}
-                />
-                <InfoLigne
-                  label="Antécédents familiaux"
-                  value={d?.antecedentsFamiliaux}
-                />
-                <InfoLigne
-                  label="Traitement en cours"
-                  value={d?.traitementEnCours}
-                />
-                <div className="sm:col-span-2">
-                  <InfoLigne label="Observations" value={d?.observations} />
-                </div>
-              </dl>
-            </CardContent>
-          </Card>
+          {/* Dossier structuré : antécédents, allergies, vaccinations */}
+          <DossierStructure
+            dossierId={d?.id ?? ""}
+            patientId={patient.id}
+            antecedents={d?.antecedents ?? []}
+            allergies={d?.allergieList ?? []}
+            vaccinations={d?.vaccinations ?? []}
+          />
+
+          {/* Synthèse (texte libre) */}
+          {(d?.traitementEnCours?.trim() || d?.observations?.trim()) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Synthèse</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <dl className="grid gap-5 sm:grid-cols-2">
+                  <InfoLigne
+                    label="Traitement en cours"
+                    value={d?.traitementEnCours}
+                  />
+                  <div className="sm:col-span-2">
+                    <InfoLigne label="Observations" value={d?.observations} />
+                  </div>
+                </dl>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Chronologie médicale unifiée */}
           <Card>

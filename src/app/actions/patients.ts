@@ -22,10 +22,6 @@ const patientSchema = z.object({
   faculte: z.string().trim().optional(),
   // Dossier médical
   groupeSanguin: z.string().trim().optional(),
-  allergies: z.string().trim().optional(),
-  antecedentsMedicaux: z.string().trim().optional(),
-  antecedentsChirurgicaux: z.string().trim().optional(),
-  antecedentsFamiliaux: z.string().trim().optional(),
   traitementEnCours: z.string().trim().optional(),
   observations: z.string().trim().optional(),
 });
@@ -48,10 +44,6 @@ function parseForm(formData: FormData) {
     type: formData.get("type") ?? "ETUDIANT",
     faculte: formData.get("faculte") ?? "",
     groupeSanguin: formData.get("groupeSanguin") ?? "",
-    allergies: formData.get("allergies") ?? "",
-    antecedentsMedicaux: formData.get("antecedentsMedicaux") ?? "",
-    antecedentsChirurgicaux: formData.get("antecedentsChirurgicaux") ?? "",
-    antecedentsFamiliaux: formData.get("antecedentsFamiliaux") ?? "",
     traitementEnCours: formData.get("traitementEnCours") ?? "",
     observations: formData.get("observations") ?? "",
   });
@@ -110,10 +102,6 @@ export async function creerPatient(
           create: {
             numeroDossier,
             groupeSanguin: d.groupeSanguin || null,
-            allergies: d.allergies || null,
-            antecedentsMedicaux: d.antecedentsMedicaux || null,
-            antecedentsChirurgicaux: d.antecedentsChirurgicaux || null,
-            antecedentsFamiliaux: d.antecedentsFamiliaux || null,
             traitementEnCours: d.traitementEnCours || null,
             observations: d.observations || null,
           },
@@ -183,19 +171,11 @@ export async function modifierPatient(
             create: {
               numeroDossier: await genererNumeroDossier(),
               groupeSanguin: d.groupeSanguin || null,
-              allergies: d.allergies || null,
-              antecedentsMedicaux: d.antecedentsMedicaux || null,
-              antecedentsChirurgicaux: d.antecedentsChirurgicaux || null,
-              antecedentsFamiliaux: d.antecedentsFamiliaux || null,
               traitementEnCours: d.traitementEnCours || null,
               observations: d.observations || null,
             },
             update: {
               groupeSanguin: d.groupeSanguin || null,
-              allergies: d.allergies || null,
-              antecedentsMedicaux: d.antecedentsMedicaux || null,
-              antecedentsChirurgicaux: d.antecedentsChirurgicaux || null,
-              antecedentsFamiliaux: d.antecedentsFamiliaux || null,
               traitementEnCours: d.traitementEnCours || null,
               observations: d.observations || null,
             },

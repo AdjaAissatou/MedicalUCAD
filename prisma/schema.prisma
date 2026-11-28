@@ -82,6 +82,52 @@ model DossierMedical {
   observations           String?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+
+  antecedents  AntecedentMedical[]
+  allergieList Allergie[]
+  vaccinations Vaccination[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// Dossier structuré : antécédents, allergies, vaccinations
+// ─────────────────────────────────────────────────────────────
+model AntecedentMedical {
+  id        String         @id @default(cuid())
+  dossierId String
+  dossier   DossierMedical @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type      String // MEDICAL | CHIRURGICAL | FAMILIAL | CHRONIQUE
+  libelle   String
+  annee     String? // année ou période (texte libre)
+  notes     String?
+  createdAt DateTime       @default(now())
+
+  @@index([dossierId])
+}
+
+model Allergie {
+  id        String         @id @default(cuid())
+  dossierId String
+  dossier   DossierMedical @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  substance String
+  type      String // MEDICAMENTEUSE | ALIMENTAIRE | AUTRE
+  severite  String? // LEGERE | MODEREE | SEVERE
+  reaction  String?
+  createdAt DateTime       @default(now())
+
+  @@index([dossierId])
+}
+
+model Vaccination {
+  id        String         @id @default(cuid())
+  dossierId String
+  dossier   DossierMedical @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  vaccin    String
+  dateAdmin DateTime?
+  rappel    DateTime? // prochaine dose / rappel
+  notes     String?
+  createdAt DateTime       @default(now())
+
+  @@index([dossierId])
 }
 
 // ─────────────────────────────────────────────────────────────

@@ -212,6 +212,46 @@ async function main() {
     n++;
   }
 
+  console.log("🧬 Création du dossier structuré (démo)…");
+  const dossiers = await prisma.dossierMedical.findMany({
+    where: {
+      patientId: { in: [patients[0].id, patients[2].id, patients[4].id] },
+    },
+    select: { id: true, patientId: true },
+  });
+  const dossierDe = (pid: string) =>
+    dossiers.find((x) => x.patientId === pid)?.id;
+  const dA = dossierDe(patients[0].id);
+  const dB = dossierDe(patients[2].id);
+  const dC = dossierDe(patients[4].id);
+  if (dA) {
+    await prisma.allergie.create({
+      data: { dossierId: dA, substance: "Pénicilline", type: "MEDICAMENTEUSE", severite: "MODEREE", reaction: "Urticaire généralisée" },
+    });
+    await prisma.antecedentMedical.create({
+      data: { dossierId: dA, type: "CHRONIQUE", libelle: "Asthme allergique", annee: "Enfance", notes: "Crises saisonnières." },
+    });
+    await prisma.vaccination.create({
+      data: { dossierId: dA, vaccin: "Fièvre jaune", dateAdmin: new Date("2021-05-10"), rappel: new Date("2031-05-10") },
+    });
+  }
+  if (dB) {
+    await prisma.antecedentMedical.create({
+      data: { dossierId: dB, type: "CHRONIQUE", libelle: "Hypertension artérielle", notes: "Sous Amlodipine 5mg." },
+    });
+  }
+  if (dC) {
+    await prisma.allergie.create({
+      data: { dossierId: dC, substance: "Arachide", type: "ALIMENTAIRE", severite: "SEVERE", reaction: "Œdème de Quincke" },
+    });
+    await prisma.antecedentMedical.create({
+      data: { dossierId: dC, type: "CHIRURGICAL", libelle: "Appendicectomie", annee: "2018" },
+    });
+    await prisma.vaccination.create({
+      data: { dossierId: dC, vaccin: "Hépatite B", dateAdmin: new Date("2019-03-01") },
+    });
+  }
+
   console.log("🎓 Création d'un accès étudiant de démonstration…");
   await prisma.user.create({
     data: {
