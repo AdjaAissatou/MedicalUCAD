@@ -29,7 +29,7 @@ export const TYPES_PATIENT = ["ETUDIANT", "PERSONNEL", "AUTRE"] as const;
 
 export const TYPE_PATIENT_LABELS: Record<string, string> = {
   ETUDIANT: "Étudiant",
-  PERSONNEL: "Personnel UCAD (enseignant, agent)",
+  PERSONNEL: "Personnel UCAD (agent, administratif)",
   AUTRE: "Autre (externe)",
 };
 

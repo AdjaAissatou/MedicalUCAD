@@ -6,12 +6,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
-import { gereDossiers } from "@/lib/authz";
+import { enregistrePatients } from "@/lib/authz";
 
 async function requireGestionDossiers() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!gereDossiers(user)) {
+  if (!enregistrePatients(user)) {
     throw new Error("Action non autorisée.");
   }
   return user;

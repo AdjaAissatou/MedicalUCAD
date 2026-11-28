@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { TYPES_PATIENT } from "@/lib/constants";
-import { gereDossiers, peutSupprimerDossier } from "@/lib/authz";
+import { enregistrePatients } from "@/lib/authz";
 import { journaliser } from "@/lib/audit";
 
 const patientSchema = z.object({
@@ -61,10 +61,10 @@ export async function creerPatient(
 ): Promise<PatientFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!gereDossiers(user)) {
+  if (!enregistrePatients(user)) {
     return {
       error:
-        "Action non autorisée : votre rôle ne permet pas de gérer les dossiers patients.",
+        "Action non autorisée : seul le secrétariat peut enregistrer ou modifier les dossiers patients.",
     };
   }
 
@@ -130,10 +130,10 @@ export async function modifierPatient(
 ): Promise<PatientFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!gereDossiers(user)) {
+  if (!enregistrePatients(user)) {
     return {
       error:
-        "Action non autorisée : votre rôle ne permet pas de gérer les dossiers patients.",
+        "Action non autorisée : seul le secrétariat peut enregistrer ou modifier les dossiers patients.",
     };
   }
 
@@ -196,7 +196,7 @@ export async function modifierPatient(
 export async function supprimerPatient(id: string) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (!peutSupprimerDossier(user)) {
+  if (!enregistrePatients(user)) {
     throw new Error("Action non autorisée.");
   }
   await prisma.patient.delete({ where: { id } });

@@ -9,6 +9,7 @@ import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import { AccesEtudiantCard } from "@/components/patients/acces-etudiant-card";
 import { DossierStructure } from "@/components/patients/dossier-structure";
+import { estSoignant, enregistrePatients, gereDossiers } from "@/lib/authz";
 import { initiales, age, formatDateHeure } from "@/lib/utils";
 import {
   TYPE_PATIENT_LABELS,
@@ -107,6 +108,12 @@ export default async function PatientDetail({
   });
 
   const d = patient.dossier;
+
+  // Droits : les soignants réalisent les actes cliniques ; seul le secrétariat
+  // enregistre/modifie le dossier et gère l'accès étudiant.
+  const peutSoigner = estSoignant(user);
+  const peutEnregistrer = enregistrePatients(user);
+  const peutRdv = gereDossiers(user);
 
   // Chronologie médicale unifiée : consultations, rendez-vous, orientations
   // et ordonnances, fusionnés et triés du plus récent au plus ancien.
@@ -252,36 +259,46 @@ export default async function PatientDetail({
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link href={`/consultations/nouvelle?patient=${patient.id}`}>
-              <Button variant="accent" size="sm">
-                <Stethoscope className="h-4 w-4" />
-                Consultation
-              </Button>
-            </Link>
-            <Link href={`/rendez-vous/nouveau?patient=${patient.id}`}>
-              <Button variant="outline" size="sm">
-                <CalendarPlus className="h-4 w-4" />
-                Rendez-vous
-              </Button>
-            </Link>
-            <Link href={`/orientations/nouvelle?patient=${patient.id}`}>
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4" />
-                Orienter
-              </Button>
-            </Link>
-            <Link href={`/examens/nouvelle?patient=${patient.id}`}>
-              <Button variant="outline" size="sm">
-                <FlaskConical className="h-4 w-4" />
-                Examen
-              </Button>
-            </Link>
-            <Link href={`/patients/${patient.id}/modifier`}>
-              <Button variant="ghost" size="sm">
-                <Pencil className="h-4 w-4" />
-                Modifier
-              </Button>
-            </Link>
+            {peutSoigner && (
+              <Link href={`/consultations/nouvelle?patient=${patient.id}`}>
+                <Button variant="accent" size="sm">
+                  <Stethoscope className="h-4 w-4" />
+                  Consultation
+                </Button>
+              </Link>
+            )}
+            {peutRdv && (
+              <Link href={`/rendez-vous/nouveau?patient=${patient.id}`}>
+                <Button variant="outline" size="sm">
+                  <CalendarPlus className="h-4 w-4" />
+                  Rendez-vous
+                </Button>
+              </Link>
+            )}
+            {peutSoigner && (
+              <Link href={`/orientations/nouvelle?patient=${patient.id}`}>
+                <Button variant="outline" size="sm">
+                  <Share2 className="h-4 w-4" />
+                  Orienter
+                </Button>
+              </Link>
+            )}
+            {peutSoigner && (
+              <Link href={`/examens/nouvelle?patient=${patient.id}`}>
+                <Button variant="outline" size="sm">
+                  <FlaskConical className="h-4 w-4" />
+                  Examen
+                </Button>
+              </Link>
+            )}
+            {peutEnregistrer && (
+              <Link href={`/patients/${patient.id}/modifier`}>
+                <Button variant="ghost" size="sm">
+                  <Pencil className="h-4 w-4" />
+                  Modifier
+                </Button>
+              </Link>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -333,11 +350,13 @@ export default async function PatientDetail({
             </CardContent>
           </Card>
 
-          <AccesEtudiantCard
-            patientId={patient.id}
-            emailPatient={patient.email}
-            compte={patient.compte}
-          />
+          {peutEnregistrer && (
+            <AccesEtudiantCard
+              patientId={patient.id}
+              emailPatient={patient.email}
+              compte={patient.compte}
+            />
+          )}
         </div>
 
         {/* Colonne principale */}

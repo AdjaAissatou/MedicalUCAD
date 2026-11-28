@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
+import { enregistrePatients } from "@/lib/authz";
 import { PageHeader } from "@/components/page-header";
 import { PatientForm } from "@/components/patients/patient-form";
 import { modifierPatient } from "@/app/actions/patients";
@@ -14,6 +16,9 @@ export default async function ModifierPatientPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const user = await getSessionUser();
+  if (!enregistrePatients(user)) redirect(`/patients/${id}`);
+
   const patient = await prisma.patient.findUnique({
     where: { id },
     include: { dossier: true },

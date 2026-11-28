@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
+import { enregistrePatients } from "@/lib/authz";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,7 +10,15 @@ import { EmptyState } from "@/components/empty-state";
 import { Reveal } from "@/components/reveal";
 import { initiales, age, formatDate } from "@/lib/utils";
 import { TYPE_PATIENT_LABELS } from "@/lib/constants";
-import { UserPlus, Search, Users, Phone, FileText } from "lucide-react";
+import {
+  UserPlus,
+  Search,
+  Users,
+  Phone,
+  FileText,
+  Upload,
+  ClipboardList,
+} from "lucide-react";
 import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +30,8 @@ export default async function PatientsPage({
 }) {
   const { q } = await searchParams;
   const recherche = q?.trim();
+  const user = await getSessionUser();
+  const peutEnregistrer = enregistrePatients(user);
 
   const where: Prisma.PatientWhereInput = recherche
     ? {
@@ -43,12 +55,28 @@ export default async function PatientsPage({
         title="Dossiers médicaux"
         description="Gérez les dossiers des étudiants et personnels de l'UCAD."
       >
-        <Link href="/patients/nouveau">
-          <Button variant="accent">
-            <UserPlus className="h-4 w-4" />
-            Nouveau patient
-          </Button>
-        </Link>
+        {peutEnregistrer && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/patients/import">
+              <Button variant="outline">
+                <Upload className="h-4 w-4" />
+                Importer
+              </Button>
+            </Link>
+            <Link href="/patients/saisie-rapide">
+              <Button variant="outline">
+                <ClipboardList className="h-4 w-4" />
+                Saisie rapide
+              </Button>
+            </Link>
+            <Link href="/patients/nouveau">
+              <Button variant="accent">
+                <UserPlus className="h-4 w-4" />
+                Nouveau patient
+              </Button>
+            </Link>
+          </div>
+        )}
       </PageHeader>
 
       <form className="mb-5">
@@ -76,7 +104,7 @@ export default async function PatientsPage({
               : "Commencez par enregistrer votre premier patient."
           }
         >
-          {!recherche && (
+          {!recherche && peutEnregistrer && (
             <Link href="/patients/nouveau">
               <Button variant="accent">
                 <UserPlus className="h-4 w-4" />

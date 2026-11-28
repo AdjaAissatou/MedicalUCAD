@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSessionUser } from "@/lib/session";
+import { enregistrePatients } from "@/lib/authz";
 import { PageHeader } from "@/components/page-header";
 import { PatientForm } from "@/components/patients/patient-form";
 import { creerPatient } from "@/app/actions/patients";
 import { ArrowLeft } from "lucide-react";
 
-export default function NouveauPatientPage() {
+export default async function NouveauPatientPage() {
+  const user = await getSessionUser();
+  if (!enregistrePatients(user)) redirect("/patients");
   return (
     <div className="max-w-3xl">
       <Link

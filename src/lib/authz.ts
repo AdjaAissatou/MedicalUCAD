@@ -47,6 +47,17 @@ export function gereDossiers(user: Pick<SessionUser, "role"> | null): boolean {
   );
 }
 
+/**
+ * Enregistre les dossiers patients (création, modification, import, saisie).
+ * C'est la fonction d'accueil / secrétariat : les soignants, eux, consultent
+ * les dossiers mais ne les créent pas.
+ */
+export function enregistrePatients(
+  user: Pick<SessionUser, "role"> | null
+): boolean {
+  return user?.role === "SECRETAIRE";
+}
+
 /** Peut supprimer un dossier patient (acte clinique sensible, réservé). */
 export function peutSupprimerDossier(
   user: Pick<SessionUser, "role"> | null
